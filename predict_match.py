@@ -20,6 +20,15 @@ def main():
     home_team = sys.argv[1]
     away_team = sys.argv[2]
     
+    # Check if date is provided as an optional argument
+    match_date = None
+    if len(sys.argv) > 3:
+        try:
+            match_date = datetime.strptime(sys.argv[3], "%Y-%m-%d")
+            print(f"Using prediction date: {match_date.strftime('%Y-%m-%d')}")
+        except ValueError:
+            print(f"Invalid date format. Using current date instead.")
+    
     # Initialize the predictor
     print(f"Initializing Premier League prediction system...")
     predictor = EPLPredictor()
@@ -29,7 +38,7 @@ def main():
     
     # Make prediction
     print(f"Predicting match outcome: {home_team} vs {away_team}")
-    prediction = predictor.predict_match(home_team, away_team)
+    prediction = predictor.predict_match(home_team, away_team, match_date)
     
     # Display results
     print("\n========== MATCH PREDICTION ==========")
@@ -50,6 +59,11 @@ def main():
     # Show feature importance
     print("\nShowing feature importance...")
     predictor.feature_importance()
+    
+    # Optional: evaluate model performance
+    if len(sys.argv) > 4 and sys.argv[4].lower() == 'evaluate':
+        print("\nEvaluating model performance...")
+        predictor.evaluate_model()
 
 if __name__ == "__main__":
-    main() 
+    main()
