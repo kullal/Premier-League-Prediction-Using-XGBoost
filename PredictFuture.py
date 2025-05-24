@@ -255,49 +255,118 @@ if __name__ == "__main__":
             print(f"Error loading X_train column names: {e}")
             exit()
 
-        # 3. Define a new match to predict (example)
-        # You'll need to fill this with actual data for a new match
-        # Ensure all features used by your model (from X_train.columns) are potentially covered here
-        # or handled (e.g. set to 0 or NaN if unavailable) in prepare_match_data
+        # 3. Get unique team names from historical data
+        all_teams = sorted(list(pd.unique(historical_df[['HomeTeam', 'AwayTeam']].values.ravel('K'))))
+        all_referees = sorted(list(historical_df['Referee'].dropna().unique()))
+
+        print("\n--- Predict Future Match ---")
+        
+        # Get date input from user
+        while True:
+            date_input = input("Enter match date (DD/MM/YYYY): ").strip()
+            try:
+                match_date = pd.to_datetime(date_input, dayfirst=True)
+                if pd.isna(match_date):
+                    print("Invalid date format. Please use DD/MM/YYYY.")
+                    continue
+                # Convert to string format expected by the model
+                date_str = match_date.strftime('%Y-%m-%d')
+                break
+            except Exception:
+                print("Invalid date format. Please use DD/MM/YYYY.")
+        
+        # Display teams with numbers and get home team selection
+        print("\nSelect Home Team:")
+        for i, team in enumerate(all_teams):
+            print(f"{i+1}. {team}")
+        
+        while True:
+            try:
+                home_team_idx = int(input("\nEnter number for Home Team: ").strip())
+                if 1 <= home_team_idx <= len(all_teams):
+                    home_team = all_teams[home_team_idx-1]
+                    break
+                else:
+                    print(f"Please enter a number between 1 and {len(all_teams)}.")
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        # Get away team selection
+        print("\nSelect Away Team:")
+        for i, team in enumerate(all_teams):
+            print(f"{i+1}. {team}")
+        
+        while True:
+            try:
+                away_team_idx = int(input("\nEnter number for Away Team: ").strip())
+                if 1 <= away_team_idx <= len(all_teams):
+                    if away_team_idx == home_team_idx:
+                        print("Away team cannot be the same as home team. Please select a different team.")
+                        continue
+                    away_team = all_teams[away_team_idx-1]
+                    break
+                else:
+                    print(f"Please enter a number between 1 and {len(all_teams)}.")
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        # Get referee selection
+        print("\nSelect Referee:")
+        for i, ref in enumerate(all_referees):
+            print(f"{i+1}. {ref}")
+        
+        while True:
+            try:
+                ref_idx = int(input("\nEnter number for Referee: ").strip())
+                if 1 <= ref_idx <= len(all_referees):
+                    referee = all_referees[ref_idx-1]
+                    break
+                else:
+                    print(f"Please enter a number between 1 and {len(all_referees)}.")
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        # Get betting odds from user
+        print("\nEnter betting odds (decimal format, e.g., 2.50):")
+        
+        try:
+            b365h = float(input("Bet365 Home win odds: ").strip())
+            b365d = float(input("Bet365 Draw odds: ").strip())
+            b365a = float(input("Bet365 Away win odds: ").strip())
+        except ValueError:
+            print("Invalid odds format. Using default values.")
+            b365h, b365d, b365a = 2.0, 3.0, 4.0
+        
+        # Create match data dictionary
         new_match_data = {
-            'Date': '2024-08-20', # Important: Date for historical context
-            'HomeTeam': 'Arsenal',
-            'AwayTeam': 'Chelsea',
-            'Referee': 'Michael Oliver', 
-            # Betting Odds (example - use actual odds for the match)
-            'B365H': 1.80, 'B365D': 3.50, 'B365A': 4.20,
-            'BSH': 1.85, 'BSD': 3.40, 'BSA': 4.10,
-            'BWH': 1.90, 'BWD': 3.60, 'BWA': 4.00,
-            'PSH': 1.82, 'PSD': 3.65, 'PSA': 4.25, # Pinnacle odds
-            'MaxH':1.95, 'MaxD':3.70, 'MaxA':4.35, # Max odds from various bookies
-            'AvgH':1.88, 'AvgD':3.62, 'AvgA':4.15, # Avg odds
-            # Add any other simple features your model was trained on
-            # e.g., if you had 'StadiumCapacity', 'Month', 'DayOfWeek' as features directly from input,
-            # they would need to be included here.
-            # Historical features (AvgGS, AvgGC, FormPts) will be calculated by prepare_match_data
+            'Date': date_str,
+            'HomeTeam': home_team,
+            'AwayTeam': away_team,
+            'Referee': referee,
+            # Betting Odds
+            'B365H': b365h, 
+            'B365D': b365d, 
+            'B365A': b365a,
+            # Use the same odds for other bookmakers if not provided
+            'BSH': b365h, 'BSD': b365d, 'BSA': b365a,
+            'BWH': b365h, 'BWD': b365d, 'BWA': b365a,
+            'PSH': b365h, 'PSD': b365d, 'PSA': b365a,
+            'MaxH': b365h, 'MaxD': b365d, 'MaxA': b365a,
+            'AvgH': b365h, 'AvgD': b365d, 'AvgA': b365a,
         }
 
         print(f"\nPredicting for match: {new_match_data['HomeTeam']} vs {new_match_data['AwayTeam']} on {new_match_data['Date']}")
+        print(f"Referee: {new_match_data['Referee']}")
+        print(f"Odds (Home/Draw/Away): {b365h:.2f} / {b365d:.2f} / {b365a:.2f}")
         
         predicted_result, probabilities = predict_single_match(new_match_data, model, label_encoders, MODEL_FEATURE_NAMES, historical_df)
         
         print(f"\nPredicted Outcome: {predicted_result}")
         if probabilities is not None:
-            print(f"Probabilities (A,D,H): {[f'{p:.3f}' for p in probabilities]}")
-
-        # Example with a team potentially not in training data (to test error handling)
-        # new_match_data_unknown_team = {
-        #     'Date': '2024-08-21',
-        #     'HomeTeam': 'Luton Town', # Assuming Luton might be newly promoted or not in original training's top teams
-        #     'AwayTeam': 'New Team FC', # Definitely not in encoders
-        #     'Referee': 'A. Taylor',
-        #     'B365H': 2.5, 'B365D': 3.0, 'B365A': 2.8
-        # }
-        # print(f"\nPredicting for match: {new_match_data_unknown_team['HomeTeam']} vs {new_match_data_unknown_team['AwayTeam']}")
-        # predicted_result_unknown, probabilities_unknown = predict_single_match(new_match_data_unknown_team, model, label_encoders, MODEL_FEATURE_NAMES, historical_df)
-        # print(f"\nPredicted Outcome (unknown team): {predicted_result_unknown}")
-        # if probabilities_unknown is not None:
-        #      print(f"Probabilities (A,D,H): {[f'{p:.3f}' for p in probabilities_unknown]}")
+            print(f"Probabilities:")
+            print(f"  Home Win: {probabilities[2]:.3f}")
+            print(f"  Draw: {probabilities[1]:.3f}")
+            print(f"  Away Win: {probabilities[0]:.3f}")
 
     else:
         print("Could not load model or encoders. Prediction cannot proceed.") 
