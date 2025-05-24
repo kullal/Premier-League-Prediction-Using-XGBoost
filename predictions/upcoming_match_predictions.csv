@@ -1,0 +1,4 @@
+HomeTeam,AwayTeam,PredictedOutcome,HomeWinProb,DrawProb,AwayWinProb
+Man United,Ipswich,Home Win,0.98275614,0.015461919,0.0017818534
+Arsenal,Everton,Draw,0.04115216,0.9298952,0.028952546
+Newcastle,Nott'm Forest,Home Win,0.8614448,0.101422004,0.03713316

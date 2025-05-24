@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Man United",
+  "AwayTeam": "Aston Villa",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.9847309589385986,
+        "Draw": 0.0013349562650546432,
+        "Away Win": 0.013934098184108734
+      }
+    }
+  }
+}

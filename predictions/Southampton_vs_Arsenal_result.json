@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Southampton",
+  "AwayTeam": "Arsenal",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.028916602954268456,
+        "Draw": 0.850821852684021,
+        "Away Win": 0.12026151269674301
+      }
+    }
+  }
+}

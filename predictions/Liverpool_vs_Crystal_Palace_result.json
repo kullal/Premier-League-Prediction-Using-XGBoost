@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Liverpool",
+  "AwayTeam": "Crystal Palace",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.31982097029685974,
+        "Draw": 0.38855302333831787,
+        "Away Win": 0.2916259765625
+      }
+    }
+  }
+}

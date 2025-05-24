@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Arsenal",
+  "AwayTeam": "Tottenham",
+  "Date": "2025-05-23",
+  "models": {
+    "odds": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.06957778334617615,
+        "Draw": 0.8613978028297424,
+        "Away Win": 0.06902437657117844
+      }
+    }
+  }
+}

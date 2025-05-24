@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Wolves",
+  "AwayTeam": "Brentford",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.9318820238113403,
+        "Draw": 0.020781217142939568,
+        "Away Win": 0.047336846590042114
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Arsenal",
+  "AwayTeam": "Aston Villa",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 2,
+      "outcome": "Away Win",
+      "probabilities": {
+        "Home Win": 0.44853612780570984,
+        "Draw": 0.05702752619981766,
+        "Away Win": 0.4944362938404083
+      }
+    }
+  }
+}

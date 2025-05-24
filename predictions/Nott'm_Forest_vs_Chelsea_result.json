@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Nott'm Forest",
+  "AwayTeam": "Chelsea",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 2,
+      "outcome": "Away Win",
+      "probabilities": {
+        "Home Win": 0.008811944164335728,
+        "Draw": 0.02124347910284996,
+        "Away Win": 0.9699445366859436
+      }
+    }
+  }
+}

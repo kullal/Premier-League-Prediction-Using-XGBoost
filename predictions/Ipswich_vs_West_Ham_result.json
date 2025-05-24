@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Ipswich",
+  "AwayTeam": "West Ham",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 2,
+      "outcome": "Away Win",
+      "probabilities": {
+        "Home Win": 0.04608293995261192,
+        "Draw": 0.006420082412660122,
+        "Away Win": 0.9474970102310181
+      }
+    }
+  }
+}

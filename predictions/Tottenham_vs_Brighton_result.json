@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Tottenham",
+  "AwayTeam": "Brighton",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.96107017993927,
+        "Draw": 0.0001480596256442368,
+        "Away Win": 0.03878183290362358
+      }
+    }
+  }
+}

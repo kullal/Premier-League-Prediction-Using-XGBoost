@@ -1,0 +1,342 @@
+{
+  "Man United vs Man City": {
+    "HomeTeam": "Man United",
+    "AwayTeam": "Man City",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06787052750587463,
+          "Draw": 0.8647987842559814,
+          "Away Win": 0.06733070313930511
+        }
+      },
+      "realistis": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.18406902253627777,
+          "Draw": 0.45777541399002075,
+          "Away Win": 0.3581555187702179
+        }
+      },
+      "prematch": {
+        "prediction": 2,
+        "outcome": "Away Win",
+        "probabilities": {
+          "Home Win": 0.2499643713235855,
+          "Draw": 0.31871646642684937,
+          "Away Win": 0.4313192069530487
+        }
+      }
+    }
+  },
+  "Arsenal vs Tottenham": {
+    "HomeTeam": "Arsenal",
+    "AwayTeam": "Tottenham",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06957778334617615,
+          "Draw": 0.8613978028297424,
+          "Away Win": 0.06902437657117844
+        }
+      },
+      "realistis": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.9007529616355896,
+          "Draw": 0.08022379875183105,
+          "Away Win": 0.01902320235967636
+        }
+      },
+      "prematch": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.9849608540534973,
+          "Draw": 0.014227253384888172,
+          "Away Win": 0.0008119233534671366
+        }
+      }
+    }
+  },
+  "Liverpool vs Everton": {
+    "HomeTeam": "Liverpool",
+    "AwayTeam": "Everton",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06864718347787857,
+          "Draw": 0.8632516264915466,
+          "Away Win": 0.0681011751294136
+        }
+      },
+      "realistis": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.24970099329948425,
+          "Draw": 0.39207175374031067,
+          "Away Win": 0.3582272231578827
+        }
+      },
+      "prematch": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.9083201289176941,
+          "Draw": 0.031172890216112137,
+          "Away Win": 0.060506995767354965
+        }
+      }
+    }
+  },
+  "Brentford vs Arsenal": {
+    "HomeTeam": "Brentford",
+    "AwayTeam": "Arsenal",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06780698150396347,
+          "Draw": 0.8649253845214844,
+          "Away Win": 0.06726766377687454
+        }
+      },
+      "realistis": {
+        "prediction": 2,
+        "outcome": "Away Win",
+        "probabilities": {
+          "Home Win": 0.0999256893992424,
+          "Draw": 0.14578023552894592,
+          "Away Win": 0.7542940378189087
+        }
+      },
+      "prematch": {
+        "prediction": 2,
+        "outcome": "Away Win",
+        "probabilities": {
+          "Home Win": 0.0008070346084423363,
+          "Draw": 0.2508881986141205,
+          "Away Win": 0.7483047842979431
+        }
+      }
+    }
+  },
+  "Fulham vs Everton": {
+    "HomeTeam": "Fulham",
+    "AwayTeam": "Everton",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.0712927058339119,
+          "Draw": 0.8579816222190857,
+          "Away Win": 0.07072565704584122
+        }
+      },
+      "realistis": {
+        "prediction": 2,
+        "outcome": "Away Win",
+        "probabilities": {
+          "Home Win": 0.30589497089385986,
+          "Draw": 0.2759651839733124,
+          "Away Win": 0.41813984513282776
+        }
+      },
+      "prematch": {
+        "prediction": 2,
+        "outcome": "Away Win",
+        "probabilities": {
+          "Home Win": 0.011165384203195572,
+          "Draw": 0.02632279321551323,
+          "Away Win": 0.9625117778778076
+        }
+      }
+    }
+  },
+  "Everton vs Brighton": {
+    "HomeTeam": "Everton",
+    "AwayTeam": "Brighton",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.07042887806892395,
+          "Draw": 0.8597024083137512,
+          "Away Win": 0.06986869871616364
+        }
+      },
+      "realistis": {
+        "prediction": 2,
+        "outcome": "Away Win",
+        "probabilities": {
+          "Home Win": 0.31448492407798767,
+          "Draw": 0.28969645500183105,
+          "Away Win": 0.3958185911178589
+        }
+      },
+      "prematch": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.6391476392745972,
+          "Draw": 0.1671285182237625,
+          "Away Win": 0.1937239021062851
+        }
+      }
+    }
+  },
+  "Brentford vs West Ham": {
+    "HomeTeam": "Brentford",
+    "AwayTeam": "West Ham",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06957778334617615,
+          "Draw": 0.8613978028297424,
+          "Away Win": 0.06902437657117844
+        }
+      },
+      "realistis": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.621587336063385,
+          "Draw": 0.2995315194129944,
+          "Away Win": 0.07888118177652359
+        }
+      },
+      "prematch": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.9261063933372498,
+          "Draw": 0.0044539435766637325,
+          "Away Win": 0.06943963468074799
+        }
+      }
+    }
+  },
+  "Bournemouth vs Wolves": {
+    "HomeTeam": "Bournemouth",
+    "AwayTeam": "Wolves",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06957778334617615,
+          "Draw": 0.8613978028297424,
+          "Away Win": 0.06902437657117844
+        }
+      },
+      "realistis": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.6060418486595154,
+          "Draw": 0.31183645129203796,
+          "Away Win": 0.08212167024612427
+        }
+      },
+      "prematch": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.6239267587661743,
+          "Draw": 0.023253971710801125,
+          "Away Win": 0.3528192937374115
+        }
+      }
+    }
+  },
+  "Man United vs Aston Villa": {
+    "HomeTeam": "Man United",
+    "AwayTeam": "Aston Villa",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06781037151813507,
+          "Draw": 0.8649186491966248,
+          "Away Win": 0.06727101653814316
+        }
+      },
+      "realistis": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.14435605704784393,
+          "Draw": 0.5900039076805115,
+          "Away Win": 0.2656400799751282
+        }
+      },
+      "prematch": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.9847309589385986,
+          "Draw": 0.0013349562650546432,
+          "Away Win": 0.013934098184108734
+        }
+      }
+    }
+  },
+  "Arsenal vs Brentford": {
+    "HomeTeam": "Arsenal",
+    "AwayTeam": "Brentford",
+    "Date": "2025-08-16",
+    "models": {
+      "odds": {
+        "prediction": 1,
+        "outcome": "Draw",
+        "probabilities": {
+          "Home Win": 0.06780698150396347,
+          "Draw": 0.8649253845214844,
+          "Away Win": 0.06726766377687454
+        }
+      },
+      "realistis": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.8004588484764099,
+          "Draw": 0.08031860738992691,
+          "Away Win": 0.11922251433134079
+        }
+      },
+      "prematch": {
+        "prediction": 0,
+        "outcome": "Home Win",
+        "probabilities": {
+          "Home Win": 0.8272762894630432,
+          "Draw": 0.172249436378479,
+          "Away Win": 0.0004742669116239995
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Luton",
+  "AwayTeam": "Man City",
+  "Date": "2025-05-23",
+  "models": {
+    "odds": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.06787052750587463,
+        "Draw": 0.8647987842559814,
+        "Away Win": 0.06733070313930511
+      }
+    }
+  }
+}

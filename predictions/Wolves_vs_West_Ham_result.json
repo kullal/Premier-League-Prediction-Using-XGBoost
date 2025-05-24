@@ -1,0 +1,34 @@
+{
+  "HomeTeam": "Wolves",
+  "AwayTeam": "West Ham",
+  "Date": "2025-05-23",
+  "models": {
+    "odds": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.06451238691806793,
+        "Draw": 0.8714883923530579,
+        "Away Win": 0.06399925798177719
+      }
+    },
+    "realistis": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.40512168407440186,
+        "Draw": 0.5336953997612,
+        "Away Win": 0.061182908713817596
+      }
+    },
+    "prematch": {
+      "prediction": 2,
+      "outcome": "Away Win",
+      "probabilities": {
+        "Home Win": 0.11737686395645142,
+        "Draw": 0.0002473970816936344,
+        "Away Win": 0.8823756575584412
+      }
+    }
+  }
+}

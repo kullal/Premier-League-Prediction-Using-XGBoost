@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Man United",
+  "AwayTeam": "Everton",
+  "Date": "2025-05-24",
+  "models": {
+    "prematch": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.9906965494155884,
+        "Draw": 0.008897652849555016,
+        "Away Win": 0.0004058052727486938
+      }
+    }
+  }
+}

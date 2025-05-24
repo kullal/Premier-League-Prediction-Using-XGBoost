@@ -1,0 +1,34 @@
+{
+  "HomeTeam": "Arsenal",
+  "AwayTeam": "Man United",
+  "Date": "2025-05-23",
+  "models": {
+    "odds": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.06786714494228363,
+        "Draw": 0.8648054599761963,
+        "Away Win": 0.0673273354768753
+      }
+    },
+    "realistis": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.8095858693122864,
+        "Draw": 0.10573882609605789,
+        "Away Win": 0.08467530459165573
+      }
+    },
+    "prematch": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.9646507501602173,
+        "Draw": 0.027423137798905373,
+        "Away Win": 0.007926016114652157
+      }
+    }
+  }
+}

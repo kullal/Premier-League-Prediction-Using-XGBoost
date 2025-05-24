@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Man City",
+  "AwayTeam": "Arsenal",
+  "Date": "2025-05-23",
+  "models": {
+    "odds": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.06781037151813507,
+        "Draw": 0.8649186491966248,
+        "Away Win": 0.06727101653814316
+      }
+    }
+  }
+}

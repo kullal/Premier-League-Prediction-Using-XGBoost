@@ -1,0 +1,25 @@
+{
+  "HomeTeam": "Arsenal",
+  "AwayTeam": "Brighton",
+  "Date": "2025-05-24",
+  "models": {
+    "odds": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.06780698150396347,
+        "Draw": 0.8649253845214844,
+        "Away Win": 0.06726766377687454
+      }
+    },
+    "realistis": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.8224488496780396,
+        "Draw": 0.08229955285787582,
+        "Away Win": 0.09525161981582642
+      }
+    }
+  }
+}

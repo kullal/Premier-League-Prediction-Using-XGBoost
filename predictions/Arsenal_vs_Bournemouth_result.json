@@ -1,0 +1,25 @@
+{
+  "HomeTeam": "Arsenal",
+  "AwayTeam": "Bournemouth",
+  "Date": "2025-05-24",
+  "models": {
+    "odds": {
+      "prediction": 1,
+      "outcome": "Draw",
+      "probabilities": {
+        "Home Win": 0.06780698150396347,
+        "Draw": 0.8649253845214844,
+        "Away Win": 0.06726766377687454
+      }
+    },
+    "realistis": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.7842451930046082,
+        "Draw": 0.08693955093622208,
+        "Away Win": 0.12881523370742798
+      }
+    }
+  }
+}

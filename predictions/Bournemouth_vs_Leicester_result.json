@@ -1,0 +1,16 @@
+{
+  "HomeTeam": "Bournemouth",
+  "AwayTeam": "Leicester",
+  "Date": "2025-05-24",
+  "models": {
+    "realistis": {
+      "prediction": 0,
+      "outcome": "Home Win",
+      "probabilities": {
+        "Home Win": 0.6673584580421448,
+        "Draw": 0.16532312333583832,
+        "Away Win": 0.16731835901737213
+      }
+    }
+  }
+}
