@@ -1,117 +1,101 @@
-# Premier League Prediction System Using XGBoost
+# Prediksi Hasil Pertandingan Liga Inggris Menggunakan XGBoost
 
-This project provides a machine learning system that predicts English Premier League (EPL) match outcomes using XGBoost. The system uses historical data from 2010-2020 seasons to predict:
+Proyek ini menggunakan algoritma XGBoost untuk memprediksi hasil pertandingan Liga Inggris (Premier League) dengan berbagai model dan pendekatan.
 
-1. Match outcomes (home win, draw, away win)
-2. Goal timing distribution (first half vs second half goals)
+## Struktur Proyek
 
-## Features
+Proyek ini terdiri dari beberapa direktori utama:
 
-- Predict match results between any two Premier League teams
-- Visualize prediction probabilities
-- Analyze which features have the most impact on predictions
-- Uses XGBoost for high prediction accuracy
+- `data/`: Berisi dataset pertandingan Liga Inggris
+  - `Dataset EPL New/`: Dataset dengan odds dan fitur lengkap
+  - `No Odds Dataset/`: Dataset tanpa odds untuk prediksi realistis
 
-## Installation
+- `historical_prediction/`: Skrip untuk prediksi berbasis data historis
+  - `train_xgboost_with_odds.py`: Melatih model XGBoost dengan odds
+  - `cross_validate_model.py`: Validasi silang untuk model
+  - `test_xgboost_model.py`: Menguji model pada data baru
 
-1. Clone this repository
-2. Install required packages:
+- `future_prediction/`: Skrip untuk prediksi pertandingan masa depan
+  - `generate_prematch_features.py`: Menghasilkan fitur prematch
+  - `train_xgboost_realistis.py`: Melatih model XGBoost tanpa odds
+  - `train_xgboost_prematch.py`: Melatih model XGBoost dengan fitur prematch
+  - `predict_new_matches.py`: Memprediksi pertandingan baru
 
-```bash
-pip install -r requirements.txt
+- `models/`: Menyimpan model XGBoost terlatih
+- `predictions/`: Menyimpan hasil prediksi dan visualisasi
+
+## Jenis Model
+
+Proyek ini menggunakan tiga jenis model XGBoost:
+
+1. **Model dengan Odds** - Menggunakan odds dari bandar taruhan untuk prediksi akurat (akurasi ~97%)
+2. **Model Realistis** - Menggunakan statistik tim tanpa odds (akurasi ~52%)
+3. **Model Prematch** - Menggunakan fitur prematch yang dihitung dari data historis (akurasi ~62%)
+
+## Fitur-fitur
+
+Beberapa fitur yang digunakan dalam model:
+
+- Statistik tim (rata-rata gol, kebobolan, dll)
+- Form tim (hasil beberapa pertandingan terakhir)
+- Statistik head-to-head
+- Performa kandang dan tandang
+- Odds (untuk model dengan odds)
+
+## Cara Penggunaan
+
+### 1. Melatih Model
+
+Untuk melatih model dengan odds:
+```
+python historical_prediction/train_xgboost_with_odds.py
 ```
 
-## Usage
-
-### Command-Line Interface
-
-The easiest way to use the system is with the command-line interface:
-
-```bash
-python predict_match.py <home_team> <away_team>
+Untuk melatih model realistis tanpa odds:
+```
+python future_prediction/train_xgboost_realistis.py
 ```
 
-For example:
-```bash
-python predict_match.py Arsenal "Man City"
+Untuk melatih model dengan fitur prematch:
+```
+python future_prediction/generate_prematch_features.py
+python future_prediction/train_xgboost_prematch.py
 ```
 
-If you run the script without arguments, it will display a list of all available teams:
-```bash
-python predict_match.py
+### 2. Memprediksi Pertandingan Baru
+
+Untuk memprediksi pertandingan baru:
+```
+python future_prediction/predict_new_matches.py
 ```
 
-### 2021 Season Predictions
+Hasil prediksi akan disimpan di direktori `predictions/`.
 
-To run predictions on specific matches from the 2021 season:
+## Performa Model
 
-```bash
-python test_2021_predictions.py
-```
+- **Model dengan Odds**: Akurasi ~97%
+- **Model Realistis**: Akurasi ~52%
+- **Model Prematch**: Akurasi ~62%
 
-This script:
-- Predicts outcomes for 5 key matches from the beginning of the 2021 season
-- Displays individual match predictions and probabilities
-- Shows a summary table of all predictions
-- Generates a visualization comparing all match predictions
+## Visualisasi
 
-### Running the Example Script
+Proyek ini menghasilkan beberapa visualisasi:
+- Confusion matrix untuk evaluasi model
+- Feature importance untuk melihat fitur yang paling berpengaruh
+- Grafik probabilitas untuk setiap prediksi pertandingan
 
-You can also run the example prediction script:
+## Persyaratan
 
-```bash
-python epl_prediction.py
-```
+- Python 3.8+
+- pandas
+- numpy
+- scikit-learn
+- xgboost
+- matplotlib
+- seaborn
+- joblib
+- tqdm
 
-This will:
-- Load the EPL dataset
-- Train XGBoost prediction models
-- Predict and visualize the outcome of a sample match (Arsenal vs Man City)
+## Catatan
 
-### Using in Your Own Code
-
-To predict different matches, you can import the `EPLPredictor` class in your own code:
-
-```python
-from epl_prediction import EPLPredictor
-
-# Initialize and train the model
-predictor = EPLPredictor()
-predictor.load_data()
-predictor.prepare_features()
-predictor.train_models()
-
-# Predict a custom match
-prediction = predictor.predict_match("Liverpool", "Chelsea")
-
-# Display prediction
-print(f"Match: {prediction['match']}")
-print("\nResult Probabilities:")
-for outcome, prob in prediction['match_result'].items():
-    print(f"  {outcome}: {prob}")
-
-print("\nGoal Timing Probabilities:")
-print(f"  First Half: {prediction['goal_timing']['first_half_goals']}")
-print(f"  Second Half: {prediction['goal_timing']['second_half_goals']}")
-
-# Visualize prediction
-predictor.visualize_prediction(prediction)
-```
-
-## Dataset
-
-The system uses the EPL dataset from seasons 2010-2020, which includes:
-- Match results
-- Team statistics (shots, corners, fouls, etc.)
-- Goal timing information (halftime vs full-time)
-
-## How It Works
-
-The prediction system uses two XGBoost models:
-1. A multi-class classifier for predicting match outcomes (home win, draw, away win)
-2. A binary classifier for predicting whether more goals will be scored in the first or second half
-
-Features used for prediction include:
-- Team identities
-- Match timing (month, day of week)
-- Historical team performance statistics 
+Model prediksi sepak bola memiliki keterbatasan karena sifat olahraga yang tidak dapat diprediksi sepenuhnya. Model dengan odds cenderung lebih akurat karena odds mencerminkan banyak faktor yang tidak tertangkap dalam data statistik sederhana. 
