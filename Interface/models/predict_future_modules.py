@@ -9,8 +9,20 @@ import matplotlib.pyplot as plt
 
 MODEL_DIR = "models"
 DATA_DIR = "Combined Dataset"
+FUTURE_DATA_DIR = "Dataset EPL New"
 
 def display_result_chart(home_win, draw, away_win):
+    """
+    Creates a horizontal bar chart showing win/draw/loss probabilities.
+    
+    Args:
+        home_win (float): Probability of home team winning
+        draw (float): Probability of a draw
+        away_win (float): Probability of away team winning
+        
+    Returns:
+        matplotlib.figure.Figure: The figure object containing the chart
+    """
     # Konversi probabilitas ke persentase
     total = home_win + draw + away_win
     home_win_pct = int(home_win * 100 / total)
@@ -18,45 +30,42 @@ def display_result_chart(home_win, draw, away_win):
     away_win_pct = int(away_win * 100 / total)
     
     # Buat figure
-    fig, ax = plt.subplots(figsize=(6, 2))
+    fig, ax = plt.subplots(figsize=(10, 2))
     
     # Buat bar horizontal berdasarkan persentase
-    bar_height = 0.3
-    bar_width = 1.0
+    segments = [home_win_pct, draw_pct, away_win_pct]
+    colors = ['#5cb85c', '#f0ad4e', '#d9534f']  # hijau, kuning, merah
+    labels = ['Home', 'Draw', 'Away']
     
-    # Buat 3 bar dengan warna berbeda
-    ax.barh(0, home_win_pct/100, height=bar_height, left=0, color='#4CAF50')
-    ax.barh(0, draw_pct/100, height=bar_height, left=home_win_pct/100, color='#FFC107')
-    ax.barh(0, away_win_pct/100, height=bar_height, left=(home_win_pct+draw_pct)/100, color='#F44336')
+    # Plot segmented bar
+    left = 0
+    for i, (segment, color) in enumerate(zip(segments, colors)):
+        ax.barh(0, segment, left=left, height=0.5, color=color)
+        # Menambahkan label di tengah segmen
+        ax.text(left + segment/2, 0, f"{labels[i]} {segment}%", 
+                ha='center', va='center', color='black', fontweight='bold')
+        left += segment
     
-    # Tambahkan teks di atas bar
-    ax.text(home_win_pct/200, 0.5, f"Win {int(home_win)}\n{home_win_pct}%", 
-            ha='center', va='center', fontweight='bold', fontsize=10)
-    
-    ax.text(home_win_pct/100 + draw_pct/200, 0.5, f"Draw {int(draw)}\n{draw_pct}%", 
-            ha='center', va='center', fontweight='bold', fontsize=10)
-    
-    ax.text((home_win_pct+draw_pct)/100 + away_win_pct/200, 0.5, f"Lost {int(away_win)}\n{away_win_pct}%", 
-            ha='center', va='center', fontweight='bold', fontsize=10)
-    
-    # Tambahkan garis berwarna di bawah teks
-    ax.plot([0, home_win_pct/100], [-0.1, -0.1], color='#4CAF50', linewidth=3)
-    ax.plot([home_win_pct/100, (home_win_pct+draw_pct)/100], [-0.1, -0.1], color='#FFC107', linewidth=3)
-    ax.plot([(home_win_pct+draw_pct)/100, 1], [-0.1, -0.1], color='#F44336', linewidth=3)
-    
-    # Hapus sumbu dan border
+    # Menghilangkan sumbu dan border
     ax.axis('off')
     
-    # Atur batas
-    ax.set_xlim(0, 1)
-    ax.set_ylim(-0.2, 1)
+    # Menggunakan tema Streamlit untuk background
+    fig.patch.set_alpha(0.0)  # Transparan
+    ax.set_facecolor('none')  # Transparan
     
+    plt.xlim(0, 100)  # Memastikan skala 0-100
     plt.tight_layout()
-    plt.show()
+    
+    return fig
 
 # --- Load Model and Encoders ---
 def load_model_and_encoders():
-    """Loads the trained XGBoost model and label encoders."""
+    """
+    Loads the trained XGBoost model and label encoders.
+    
+    Returns:
+        tuple: (model, label_encoders) or (None, None) if loading fails
+    """
     model_path = os.path.join(MODEL_DIR, "xgboost_epl_model.json")
     encoders_path = os.path.join(DATA_DIR, "label_encoders.joblib")
 
@@ -76,7 +85,15 @@ def load_model_and_encoders():
 
 # --- Feature Name Cleaning (consistent with preprocess_data.py) ---
 def clean_feature_name(col_name):
-    """Cleans a column name to be XGBoost compatible. THIS MUST MATCH preprocess_data.py."""
+    """
+    Cleans a column name to be XGBoost compatible. THIS MUST MATCH preprocess_data.py.
+    
+    Args:
+        col_name (str): The column name to clean
+        
+    Returns:
+        str: The cleaned column name
+    """
     import re
     new_name = str(col_name).replace('<', '_lt_').replace('>', '_gt_').replace('=', '_eq_')
     new_name = new_name.replace('[', '_').replace(']', '_').replace(' ', '_')
@@ -87,7 +104,18 @@ def clean_feature_name(col_name):
 
 # --- Function to calculate historical features for a new match ---
 def get_historical_features(home_team_name, away_team_name, date_of_match, historical_data_df):
-    """Calculates historical features for the home and away teams up to the match date."""
+    """
+    Calculates historical features for the home and away teams up to the match date.
+    
+    Args:
+        home_team_name (str): Name of the home team.
+        away_team_name (str): Name of the away team.
+        date_of_match (pd.Timestamp): The date of the match to predict.
+        historical_data_df (pd.DataFrame): DataFrame containing all historical matches with 'Date', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG'.
+    
+    Returns:
+        dict: Dictionary containing historical features for home and away teams.
+    """
     features = {}
     teams = {'Home': home_team_name, 'Away': away_team_name}
     windows = [3, 5, 10]
@@ -106,7 +134,7 @@ def get_historical_features(home_team_name, away_team_name, date_of_match, histo
         for N in windows:
             last_n_matches = team_matches.head(N)
             if len(last_n_matches) < N:
-                # Not enough historical matches, fill with a default (e.g., mean or 0)
+                # Not enough historical matches, fill with a default
                 features[f'{team_type}_AvgGS_L{N}'] = np.nan
                 features[f'{team_type}_AvgGC_L{N}'] = np.nan
                 features[f'{team_type}_FormPts_L{N}'] = np.nan
@@ -136,7 +164,19 @@ def get_historical_features(home_team_name, away_team_name, date_of_match, histo
 
 # --- Prepare a single match data for prediction ---
 def prepare_match_data(match_input, label_encoders, all_features_columns, historical_data_df):
-    """Prepares a single match data row for prediction, including historical features."""
+    """
+    Prepares a single match data row for prediction, including historical features.
+    
+    Args:
+        match_input (dict): Dictionary with raw match data (e.g., HomeTeam, AwayTeam, Referee, odds, etc.)
+                            It must also include 'Date' for historical feature calculation.
+        label_encoders (dict): Loaded label encoders.
+        all_features_columns (list): List of all feature columns expected by the model (cleaned names).
+        historical_data_df (pd.DataFrame): DataFrame of all historical matches for feature calculation.
+    
+    Returns:
+        pd.DataFrame: A single-row DataFrame ready for prediction, or None if error.
+    """
     processed_data = {}
 
     # Basic categorical encoding
@@ -166,7 +206,7 @@ def prepare_match_data(match_input, label_encoders, all_features_columns, histor
 
     # Calculate and add historical features
     if 'HomeTeam' in match_input and 'AwayTeam' in match_input and 'Date' in match_input:
-        match_date = pd.to_datetime(match_input['Date'])
+        match_date = pd.to_datetime(match_input['Date'], dayfirst=True)
         hist_features = get_historical_features(match_input['HomeTeam'], match_input['AwayTeam'], match_date, historical_data_df)
         for key, value in hist_features.items():
             cleaned_key = clean_feature_name(key)
@@ -190,7 +230,20 @@ def prepare_match_data(match_input, label_encoders, all_features_columns, histor
 
 # --- Main Prediction Function ---
 def predict_single_match(match_input, model, label_encoders, train_columns, historical_data_df):
-    """Makes a prediction for a single match."""
+    """
+    Makes a prediction for a single match.
+    
+    Args:
+        match_input (dict): Raw input data for the match. Must include 'Date'.
+        model: Trained XGBoost model.
+        label_encoders: Loaded label encoders.
+        train_columns (list): Column names from the training data (X_train.columns), cleaned.
+        historical_data_df (pd.DataFrame): DataFrame of all historical matches.
+    
+    Returns:
+        tuple: (predicted_outcome, probabilities) where predicted_outcome is a string and 
+               probabilities is an array of class probabilities
+    """
     processed_row = prepare_match_data(match_input, label_encoders, train_columns, historical_data_df)
     
     if processed_row is None:
@@ -213,6 +266,12 @@ def predict_single_match(match_input, model, label_encoders, train_columns, hist
 
 # Fungsi untuk mendapatkan data historis
 def get_historical_data():
+    """
+    Loads historical match data from CSV file.
+    
+    Returns:
+        pd.DataFrame: DataFrame containing historical match data or None if error
+    """
     try:
         historical_data_path = os.path.join(DATA_DIR, "combined_epl_data.csv")
         historical_df = pd.read_csv(historical_data_path, low_memory=False)
@@ -226,6 +285,12 @@ def get_historical_data():
 
 # Fungsi untuk mendapatkan nama fitur model
 def get_model_feature_names():
+    """
+    Gets the feature names used by the model from X_train.csv.
+    
+    Returns:
+        list: List of feature names or None if error
+    """
     try:
         x_train_path = os.path.join(DATA_DIR, "X_train.csv")
         MODEL_FEATURE_NAMES = pd.read_csv(x_train_path, nrows=0).columns.tolist()
@@ -234,7 +299,115 @@ def get_model_feature_names():
         print(f"Error loading model feature names: {str(e)}")
         return None
 
+# Function to get all teams and referees
+def get_teams_and_referees():
+    """
+    Gets lists of all teams and referees from historical data.
+    
+    Returns:
+        tuple: (all_teams, all_referees) lists or (None, None) if error
+    """
+    historical_df = get_historical_data()
+    if historical_df is None:
+        return None, None
+    
+    try:
+        all_teams = sorted(list(pd.unique(historical_df[['HomeTeam', 'AwayTeam']].values.ravel('K'))))
+        all_referees = sorted(list(historical_df['Referee'].dropna().unique()))
+        return all_teams, all_referees
+    except Exception as e:
+        print(f"Error getting teams and referees: {str(e)}")
+        return None, None
+
+# Get default odds from bookmakers
+def get_default_odds():
+    """
+    Returns default odds values for bookmakers.
+    
+    Returns:
+        dict: Dictionary with default odds values
+    """
+    return {
+        "B365H": 2.0, "B365D": 3.0, "B365A": 4.0,
+        "BSH": 2.0, "BSD": 3.0, "BSA": 4.0,
+        "BWH": 2.0, "BWD": 3.0, "BWA": 4.0,
+        "PSH": 2.0, "PSD": 3.0, "PSA": 4.0,
+        "MaxH": 2.0, "MaxD": 3.0, "MaxA": 4.0,
+        "AvgH": 2.0, "AvgD": 3.0, "AvgA": 4.0
+    }
+
+# Wrapper function for streamlit interface
+def predict_future_match(home_team, away_team, match_date, referee="Michael Oliver", odds=None):
+    """
+    Complete function to predict a future match from the streamlit interface.
+    
+    Args:
+        home_team (str): Name of the home team
+        away_team (str): Name of the away team
+        match_date (datetime): Date of the match
+        referee (str, optional): Name of the referee. Defaults to "Michael Oliver".
+        odds (dict, optional): Dictionary with odds values. Defaults to None.
+    
+    Returns:
+        dict: Result dictionary containing prediction outcome and probabilities
+    """
+    # Load dependencies
+    model, label_encoders = load_model_and_encoders()
+    historical_df = get_historical_data()
+    model_features = get_model_feature_names()
+    
+    if model is None or label_encoders is None or historical_df is None or model_features is None:
+        return {"error": "Failed to load model, encoders, or historical data"}
+    
+    # Default odds if not provided
+    if odds is None:
+        odds = get_default_odds()
+    elif not isinstance(odds, dict):
+        return {"error": "Odds must be provided as a dictionary"}
+    else:
+        # Ensure all required odds are present
+        default_odds = get_default_odds()
+        for key in default_odds:
+            if key not in odds:
+                odds[key] = default_odds[key]
+    
+    # Format date
+    match_date_str = match_date.strftime("%d/%m/%Y")
+    
+    # Prepare match data
+    match_data = {
+        'Date': match_date_str,
+        'HomeTeam': home_team,
+        'AwayTeam': away_team,
+        'Referee': referee,
+    }
+    
+    # Add all odds to match data
+    for key, value in odds.items():
+        match_data[key] = value
+    
+    # Make prediction
+    predicted_outcome, probabilities = predict_single_match(match_data, model, label_encoders, model_features, historical_df)
+    
+    if isinstance(predicted_outcome, str) and predicted_outcome.startswith("Error"):
+        return {"error": predicted_outcome}
+    
+    # Prepare result
+    result = {
+        "match_date": match_date_str,
+        "home_team": home_team,
+        "away_team": away_team,
+        "referee": referee,
+        "predicted_outcome": predicted_outcome,
+        "home_win_prob": probabilities[2],
+        "draw_prob": probabilities[1],
+        "away_win_prob": probabilities[0],
+        "odds": odds
+    }
+    
+    return result
+
 # Jika file dijalankan langsung (bukan diimpor)
 if __name__ == "__main__":
     print("Modul predict_future_modules.py dijalankan langsung.")
-    print("Gunakan fungsi predict_single_match() untuk memprediksi pertandingan.")
+    print("Gunakan fungsi predict_future_match() untuk memprediksi pertandingan.")

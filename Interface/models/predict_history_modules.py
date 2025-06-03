@@ -245,11 +245,18 @@ def predict_history_matchup(home_team, away_team):
     except Exception as e:
         return {"error": f"Error loading data: {str(e)}"}
     
-    # Find the match in future_df
+    # Find the match in future_df - use case-insensitive exact match
     target_matches = future_df[
-        future_df['HomeTeam'].str.contains(home_team, case=False, na=False) &
-        future_df['AwayTeam'].str.contains(away_team, case=False, na=False)
+        (future_df['HomeTeam'].str.lower() == home_team.lower()) &
+        (future_df['AwayTeam'].str.lower() == away_team.lower())
     ]
+    
+    # If no exact match found, try partial match
+    if target_matches.empty:
+        target_matches = future_df[
+            future_df['HomeTeam'].str.contains(home_team, case=False, na=False) &
+            future_df['AwayTeam'].str.contains(away_team, case=False, na=False)
+        ]
     
     if target_matches.empty:
         return {"error": f"No match found for {home_team} vs {away_team}"}
@@ -274,7 +281,9 @@ def predict_history_matchup(home_team, away_team):
         "home_win_prob": float(probabilities[2]) if probabilities is not None else 0,
         "draw_prob": float(probabilities[1]) if probabilities is not None else 0,
         "away_win_prob": float(probabilities[0]) if probabilities is not None else 0,
-        "match_date": future_match_details_row.get('Date', 'N/A')
+        "match_date": future_match_details_row.get('Date', 'N/A'),
+        "home_team": future_match_details_row.get('HomeTeam', home_team),
+        "away_team": future_match_details_row.get('AwayTeam', away_team)
     }
     
     # Add actual result if available
