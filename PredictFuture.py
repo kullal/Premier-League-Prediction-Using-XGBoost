@@ -4,9 +4,56 @@ import joblib
 import json
 import os
 import numpy as np
+import sys
+import matplotlib.pyplot as plt
 
 MODEL_DIR = "models"
 DATA_DIR = "Combined Dataset"
+
+# Pindahkan fungsi ini ke bagian atas file, setelah import
+def display_result_chart(home_win, draw, away_win):
+    # Konversi probabilitas ke persentase
+    total = home_win + draw + away_win
+    home_win_pct = int(home_win * 100 / total)
+    draw_pct = int(draw * 100 / total)
+    away_win_pct = int(away_win * 100 / total)
+    
+    # Buat figure
+    fig, ax = plt.subplots(figsize=(6, 2))
+    
+    # Buat bar horizontal berdasarkan persentasi
+    bar_height = 0.3
+    bar_width = 1.0
+    
+    # Buat 3 bar dengan warna berbeda
+    ax.barh(0, home_win_pct/100, height=bar_height, left=0, color='#4CAF50')
+    ax.barh(0, draw_pct/100, height=bar_height, left=home_win_pct/100, color='#FFC107')
+    ax.barh(0, away_win_pct/100, height=bar_height, left=(home_win_pct+draw_pct)/100, color='#F44336')
+    
+    # Tambahkan teks di atas bar
+    ax.text(home_win_pct/200, 0.5, f"Win {int(home_win)}\n{home_win_pct}%", 
+            ha='center', va='center', fontweight='bold', fontsize=10)
+    
+    ax.text(home_win_pct/100 + draw_pct/200, 0.5, f"Draw {int(draw)}\n{draw_pct}%", 
+            ha='center', va='center', fontweight='bold', fontsize=10)
+    
+    ax.text((home_win_pct+draw_pct)/100 + away_win_pct/200, 0.5, f"Lost {int(away_win)}\n{away_win_pct}%", 
+            ha='center', va='center', fontweight='bold', fontsize=10)
+    
+    # Tambahkan garis berwarna di bawah teks
+    ax.plot([0, home_win_pct/100], [-0.1, -0.1], color='#4CAF50', linewidth=3)
+    ax.plot([home_win_pct/100, (home_win_pct+draw_pct)/100], [-0.1, -0.1], color='#FFC107', linewidth=3)
+    ax.plot([(home_win_pct+draw_pct)/100, 1], [-0.1, -0.1], color='#F44336', linewidth=3)
+    
+    # Hapus sumbu dan border
+    ax.axis('off')
+    
+    # Atur batas
+    ax.set_xlim(0, 1)
+    ax.set_ylim(-0.2, 1)
+    
+    plt.tight_layout()
+    plt.show()
 
 # --- Load Model and Encoders ---
 def load_model_and_encoders():
@@ -213,24 +260,14 @@ if __name__ == "__main__":
     model, label_encoders = load_model_and_encoders()
 
     if model and label_encoders:
-        # 1. Load historical data for feature calculation
-        # This should be your combined_epl_data.csv or similar
         try:
             historical_data_path = os.path.join(DATA_DIR, "combined_epl_data.csv")
             if not os.path.exists(historical_data_path):
                 raise FileNotFoundError(f"Historical data file not found at {historical_data_path}")
-            
-            # Specify dtypes to handle potential mixed type columns if any, though Date is main one
-            # Let's assume other columns are mostly numeric or string as per original CSVs
             historical_df = pd.read_csv(historical_data_path, low_memory=False) 
-            # Ensure Date column is parsed correctly; it's critical for historical feature logic
             historical_df['Date'] = pd.to_datetime(historical_df['Date'], dayfirst=True, errors='coerce')
-            # Drop rows where Date could not be parsed if any, as they are unusable for time-series logic
             historical_df.dropna(subset=['Date'], inplace=True)
-
-            # Filter out future data if the CSV contains it (e.g. placeholder fixtures)
-            historical_df = historical_df[historical_df['FTHG'].notna()] 
-
+            historical_df = historical_df[historical_df['FTHG'].notna()]
         except FileNotFoundError as e:
             print(e)
             print("Please ensure 'combined_epl_data.csv' is in the 'Combined Dataset' directory.")
@@ -239,12 +276,10 @@ if __name__ == "__main__":
             print(f"Error loading historical data: {e}")
             exit()
             
-        # 2. Get the feature names the model was trained on (from X_train.csv columns)
         try:
             x_train_path = os.path.join(DATA_DIR, "X_train.csv")
             if not os.path.exists(x_train_path):
                  raise FileNotFoundError(f"X_train.csv not found at {x_train_path}. Needed for feature names.")
-            # X_train.csv columns are ALREADY CLEANED by preprocess_data.py
             MODEL_FEATURE_NAMES = pd.read_csv(x_train_path, nrows=0).columns.tolist()
             print(f"Model expects {len(MODEL_FEATURE_NAMES)} features. First 5: {MODEL_FEATURE_NAMES[:5]}")
         except FileNotFoundError as e:
@@ -255,88 +290,122 @@ if __name__ == "__main__":
             print(f"Error loading X_train column names: {e}")
             exit()
 
-        # 3. Get unique team names from historical data
         all_teams = sorted(list(pd.unique(historical_df[['HomeTeam', 'AwayTeam']].values.ravel('K'))))
         all_referees = sorted(list(historical_df['Referee'].dropna().unique()))
 
-        print("\n--- Predict Future Match ---")
-        
-        # Get date input from user
-        while True:
-            date_input = input("Enter match date (DD/MM/YYYY): ").strip()
+        date_str = None
+        home_team = None
+        away_team = None
+        referee = None
+        b365h, b365d, b365a = 2.0, 3.0, 4.0 # Default odds
+
+        if len(sys.argv) >= 5: # script_name, date, home, away, referee, [optional_odds_H D A]
             try:
-                match_date = pd.to_datetime(date_input, dayfirst=True)
-                if pd.isna(match_date):
-                    print("Invalid date format. Please use DD/MM/YYYY.")
-                    continue
-                # Convert to string format expected by the model
-                date_str = match_date.strftime('%Y-%m-%d')
-                break
-            except Exception:
-                print("Invalid date format. Please use DD/MM/YYYY.")
-        
-        # Display teams with numbers and get home team selection
-        print("\nSelect Home Team:")
-        for i, team in enumerate(all_teams):
-            print(f"{i+1}. {team}")
-        
-        while True:
-            try:
-                home_team_idx = int(input("\nEnter number for Home Team: ").strip())
-                if 1 <= home_team_idx <= len(all_teams):
-                    home_team = all_teams[home_team_idx-1]
-                    break
+                cli_date_input = sys.argv[1]
+                cli_match_date = pd.to_datetime(cli_date_input, dayfirst=True)
+                if pd.isna(cli_match_date):
+                    print(f"Invalid date format from CLI: {cli_date_input}. Use DD/MM/YYYY. Falling back to interactive.")
                 else:
-                    print(f"Please enter a number between 1 and {len(all_teams)}.")
-            except ValueError:
-                print("Please enter a valid number.")
-        
-        # Get away team selection
-        print("\nSelect Away Team:")
-        for i, team in enumerate(all_teams):
-            print(f"{i+1}. {team}")
-        
-        while True:
-            try:
-                away_team_idx = int(input("\nEnter number for Away Team: ").strip())
-                if 1 <= away_team_idx <= len(all_teams):
-                    if away_team_idx == home_team_idx:
-                        print("Away team cannot be the same as home team. Please select a different team.")
+                    date_str = cli_match_date.strftime('%Y-%m-%d')
+                    
+                    cli_home_team = sys.argv[2]
+                    cli_away_team = sys.argv[3]
+                    cli_referee = sys.argv[4]
+
+                    if cli_home_team in all_teams and cli_away_team in all_teams and cli_referee in all_referees:
+                        if cli_home_team != cli_away_team:
+                            home_team = cli_home_team
+                            away_team = cli_away_team
+                            referee = cli_referee
+                            print(f"Using CLI arguments - Date: {date_str}, Home: {home_team}, Away: {away_team}, Referee: {referee}")
+                            # Optionally parse odds if provided
+                            if len(sys.argv) == 8:
+                                try:
+                                    b365h = float(sys.argv[5])
+                                    b365d = float(sys.argv[6])
+                                    b365a = float(sys.argv[7])
+                                    print(f"Using CLI odds: H={b365h}, D={b365d}, A={b365a}")
+                                except ValueError:
+                                    print("Invalid odds from CLI. Using default odds.")
+                            elif len(sys.argv) > 5 and len(sys.argv) != 8:
+                                print("Incorrect number of odds provided via CLI (expected 3: H D A). Using default odds.")
+                        else:
+                            print("CLI Error: Home and Away teams cannot be the same. Fallback to interactive.")
+                            date_str = None # Reset to trigger interactive
+                    else:
+                        print("CLI Error: Invalid team or referee name. Fallback to interactive.")
+                        if cli_home_team not in all_teams: print(f"Invalid Home Team: {cli_home_team}")
+                        if cli_away_team not in all_teams: print(f"Invalid Away Team: {cli_away_team}")
+                        if cli_referee not in all_referees: print(f"Invalid Referee: {cli_referee}")
+                        date_str = None # Reset to trigger interactive
+            except Exception as e:
+                print(f"Error processing CLI arguments: {e}. Falling back to interactive input.")
+                date_str = None # Ensure fallback
+
+        if not all([date_str, home_team, away_team, referee]):
+            print("\n--- Predict Future Match (Interactive) ---")
+            while date_str is None:
+                date_input = input("Enter match date (DD/MM/YYYY): ").strip()
+                try:
+                    match_date = pd.to_datetime(date_input, dayfirst=True)
+                    if pd.isna(match_date):
+                        print("Invalid date format. Please use DD/MM/YYYY.")
                         continue
-                    away_team = all_teams[away_team_idx-1]
-                    break
-                else:
-                    print(f"Please enter a number between 1 and {len(all_teams)}.")
-            except ValueError:
-                print("Please enter a valid number.")
-        
-        # Get referee selection
-        print("\nSelect Referee:")
-        for i, ref in enumerate(all_referees):
-            print(f"{i+1}. {ref}")
-        
-        while True:
+                    date_str = match_date.strftime('%Y-%m-%d')
+                except Exception:
+                    print("Invalid date format. Please use DD/MM/YYYY.")
+            
+            print("\nSelect Home Team:")
+            for i, team in enumerate(all_teams): print(f"{i+1}. {team}")
+            while home_team is None:
+                try:
+                    home_team_idx = int(input("\nEnter number for Home Team: ").strip())
+                    if 1 <= home_team_idx <= len(all_teams):
+                        home_team = all_teams[home_team_idx-1]
+                    else:
+                        print(f"Please enter a number between 1 and {len(all_teams)}.")
+                except ValueError:
+                    print("Please enter a valid number.")
+            
+            print("\nSelect Away Team:")
+            for i, team in enumerate(all_teams): print(f"{i+1}. {team}")
+            while away_team is None:
+                try:
+                    away_team_idx = int(input("\nEnter number for Away Team: ").strip())
+                    if 1 <= away_team_idx <= len(all_teams):
+                        if all_teams[away_team_idx-1] == home_team:
+                            print("Away team cannot be the same as home team.")
+                            continue
+                        away_team = all_teams[away_team_idx-1]
+                    else:
+                        print(f"Please enter a number between 1 and {len(all_teams)}.")
+                except ValueError:
+                    print("Please enter a valid number.")
+            
+            print("\nSelect Referee:")
+            for i, ref in enumerate(all_referees): print(f"{i+1}. {ref}")
+            while referee is None:
+                try:
+                    ref_idx = int(input("\nEnter number for Referee: ").strip())
+                    if 1 <= ref_idx <= len(all_referees):
+                        referee = all_referees[ref_idx-1]
+                    else:
+                        print(f"Please enter a number between 1 and {len(all_referees)}.")
+                except ValueError:
+                    print("Please enter a valid number.")
+            
+            print("\nEnter betting odds (decimal format, e.g., 2.50). Press Enter to use defaults (2.0, 3.0, 4.0):")
             try:
-                ref_idx = int(input("\nEnter number for Referee: ").strip())
-                if 1 <= ref_idx <= len(all_referees):
-                    referee = all_referees[ref_idx-1]
-                    break
-                else:
-                    print(f"Please enter a number between 1 and {len(all_referees)}.")
+                b365h_in = input(f"Bet365 Home win odds (default {b365h}): ").strip()
+                b365d_in = input(f"Bet365 Draw odds (default {b365d}): ").strip()
+                b365a_in = input(f"Bet365 Away win odds (default {b365a}): ").strip()
+                if b365h_in: b365h = float(b365h_in)
+                if b365d_in: b365d = float(b365d_in)
+                if b365a_in: b365a = float(b365a_in)
             except ValueError:
-                print("Please enter a valid number.")
-        
-        # Get betting odds from user
-        print("\nEnter betting odds (decimal format, e.g., 2.50):")
-        
-        try:
-            b365h = float(input("Bet365 Home win odds: ").strip())
-            b365d = float(input("Bet365 Draw odds: ").strip())
-            b365a = float(input("Bet365 Away win odds: ").strip())
-        except ValueError:
-            print("Invalid odds format. Using default values.")
-            b365h, b365d, b365a = 2.0, 3.0, 4.0
-        
+                print("Invalid odds format. Using default values.")
+                # Defaults are already set
+
         # Create match data dictionary
         new_match_data = {
             'Date': date_str,
@@ -367,6 +436,9 @@ if __name__ == "__main__":
             print(f"  Home Win: {probabilities[2]:.3f}")
             print(f"  Draw: {probabilities[1]:.3f}")
             print(f"  Away Win: {probabilities[0]:.3f}")
+            
+            # Tambahkan kode ini untuk menampilkan chart
+            display_result_chart(probabilities[2], probabilities[1], probabilities[0])
 
     else:
         print("Could not load model or encoders. Prediction cannot proceed.") 

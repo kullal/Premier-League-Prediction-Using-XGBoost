@@ -5,14 +5,13 @@ import json
 import os
 import numpy as np
 from datetime import datetime
-import sys # Ditambahkan untuk argumen CLI
+import sys
 import matplotlib.pyplot as plt
 
 MODEL_DIR = "models"
 DATA_DIR = "Combined Dataset"
 FUTURE_DATA_DIR = "Dataset EPL New" # Directory for 2024-2025 data
 
-# Pindahkan fungsi ini ke bagian atas file, setelah import
 def display_result_chart(home_win, draw, away_win):
     # Konversi probabilitas ke persentase
     total = home_win + draw + away_win
@@ -105,7 +104,6 @@ def get_historical_features(home_team_name, away_team_name, date_of_match, histo
         print("Error: Invalid date_of_match provided for historical feature calculation.")
         return None
 
-
     for team_key_prefix, team_name in teams.items(): # team_key_prefix will be 'HomeTeam' or 'AwayTeam'
         team_matches = historical_data_df[
             ((historical_data_df['HomeTeam'] == team_name) | (historical_data_df['AwayTeam'] == team_name)) &
@@ -161,10 +159,8 @@ def prepare_future_match_data(future_match_row, label_encoders, model_feature_na
             processed_data[encoded_col_name] = -1
 
     # 2. Numerical Features from future_match_row (e.g., Odds)
-    # Assume future_match_row is a Series or dict; its keys are original column names
     for orig_col_name, value in future_match_row.items():
         if orig_col_name not in ['HomeTeam', 'AwayTeam', 'Referee', 'Date', 'FTR', 'FTHG', 'FTAG', 'Time', 'Div'] and not pd.isna(value):
-             # Exclude IDs, results, and already processed. Ensure value is not NaN.
             cleaned_key = clean_feature_name(orig_col_name)
             processed_data[cleaned_key] = value
 
@@ -176,8 +172,8 @@ def prepare_future_match_data(future_match_row, label_encoders, model_feature_na
     if home_team and away_team and match_date_str:
         match_date = pd.to_datetime(match_date_str, dayfirst=True, errors='coerce') # Assuming dd/mm/yyyy
         if pd.isna(match_date):
-             print(f"Error: Could not parse match date '{match_date_str}' for historical features.")
-             hist_features = None
+            print(f"Error: Could not parse match date '{match_date_str}' for historical features.")
+            hist_features = None
         else:
             hist_features = get_historical_features(home_team, away_team, match_date, historical_data_df)
         
@@ -194,19 +190,14 @@ def prepare_future_match_data(future_match_row, label_encoders, model_feature_na
         for h_feat_template in ['{}_AvgGS_L{}', '{}_AvgGC_L{}', '{}_Form_Points_L{}']:
             for team_prefix in ['HomeTeam', 'AwayTeam']:
                 for N in [3,5,10]:
-                     processed_data[clean_feature_name(h_feat_template.format(team_prefix, N))] = np.nan
-
+                    processed_data[clean_feature_name(h_feat_template.format(team_prefix, N))] = np.nan
 
     # 4. Create DataFrame and align with model_feature_names
     final_data_row = pd.DataFrame([processed_data])
     final_data_row = final_data_row.reindex(columns=model_feature_names, fill_value=np.nan)
     
-    # 5. Imputation (simple fill with 0 for now, consistent with predict_match.py)
-    # Check if any columns expected by the model are entirely missing and were not filled by reindex (should not happen if reindex works)
-    # For NaNs that exist (e.g. missing odds for a specific bookie, or failed hist data), fill with 0.
+    # 5. Imputation (simple fill with 0 for now)
     if final_data_row.isnull().any().any():
-        # print("NaNs found before final fill, filling with 0:")
-        # print(final_data_row.isnull().sum()[final_data_row.isnull().sum() > 0])
         final_data_row = final_data_row.fillna(0) 
         
     return final_data_row
@@ -221,175 +212,79 @@ def make_prediction(data_row, model):
     except Exception as e:
         print(f"Error during XGBoost prediction: {e}")
         print(f"Data row causing error (first 5 features): {data_row.iloc[:, :5].to_dict()}")
-        # Check for non-numeric data if that's a common issue
-        # for col in data_row.columns:
-        #     if not pd.api.types.is_numeric_dtype(data_row[col]):
-        #         print(f"Non-numeric column: {col}, type: {data_row[col].dtype}, value: {data_row[col].iloc[0]}")
         return f"Prediction Error: {e}", None
 
-# --- Main Execution ---
-if __name__ == "__main__":
+# --- Fungsi untuk predict_history_matchup yang akan dipanggil dari predict.py ---
+def predict_history_matchup(home_team, away_team):
+    """
+    Memprediksi hasil pertandingan berdasarkan riwayat pertandingan sebelumnya
+    
+    Args:
+        home_team (str): Nama tim tuan rumah
+        away_team (str): Nama tim tandang
+    
+    Returns:
+        dict: Hasil prediksi berisi predicted_outcome dan probabilities
+    """
     model, label_encoders, model_feature_names = load_dependencies()
-
+    
     if not all([model, label_encoders, model_feature_names]):
-        exit()
-
-    # Load historical data (combined_epl_data.csv)
+        return {"error": "Could not load model, encoders, or feature names"}
+    
     try:
         hist_data_path = os.path.join(DATA_DIR, "combined_epl_data.csv")
         historical_df = pd.read_csv(hist_data_path, low_memory=False)
-        historical_df['Date'] = pd.to_datetime(historical_df['Date'], dayfirst=True, errors='coerce') # Must match preprocess
-        historical_df.dropna(subset=['Date', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG'], inplace=True) # Ensure key columns are good
-    except Exception as e:
-        print(f"Error loading historical_df from {hist_data_path}: {e}")
-        exit()
-
-    # Load future matches data (EPL 2024-2025.csv)
-    try:
+        historical_df['Date'] = pd.to_datetime(historical_df['Date'], dayfirst=True, errors='coerce')
+        historical_df.dropna(subset=['Date', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG'], inplace=True)
+        
         future_matches_path = os.path.join(FUTURE_DATA_DIR, "EPL 2024-2025.csv")
         future_df = pd.read_csv(future_matches_path, low_memory=False)
         future_df['HomeTeam'] = future_df['HomeTeam'].astype(str)
         future_df['AwayTeam'] = future_df['AwayTeam'].astype(str)
-        if 'Date' in future_df.columns:
-             future_df['Date_dt'] = pd.to_datetime(future_df['Date'], dayfirst=True, errors='coerce')
-        else:
-            print("Error: 'Date' column missing in future matches CSV.")
-            exit()
-
+        future_df['Date_dt'] = pd.to_datetime(future_df['Date'], dayfirst=True, errors='coerce')
     except Exception as e:
-        print(f"Error loading future_matches_df from {future_matches_path}: {e}")
-        exit()
-
-    all_teams = sorted(list(pd.unique(future_df[['HomeTeam', 'AwayTeam']].values.ravel('K'))))
+        return {"error": f"Error loading data: {str(e)}"}
     
-    input_home_team = None
-    input_away_team = None
-
-    if len(sys.argv) == 3:
-        cli_home_team = sys.argv[1]
-        cli_away_team = sys.argv[2]
-        
-        valid_cli_home = cli_home_team in all_teams
-        valid_cli_away = cli_away_team in all_teams
-
-        if valid_cli_home and valid_cli_away:
-            if cli_home_team != cli_away_team:
-                input_home_team = cli_home_team
-                input_away_team = cli_away_team
-                print(f"Using command line arguments: Home Team: {input_home_team}, Away Team: {input_away_team}")
-            else:
-                print("Command line arguments: Home team and away team cannot be the same. Falling back to interactive input.")
-        else:
-            print("Command line arguments: One or both team names are invalid. Falling back to interactive input.")
-            if not valid_cli_home:
-                print(f"Invalid Home Team from CLI: '{cli_home_team}'. Available: {', '.join(all_teams[:5])}...")
-            if not valid_cli_away:
-                 print(f"Invalid Away Team from CLI: '{cli_away_team}'. Available: {', '.join(all_teams[:5])}...")
-
-    if input_home_team is None or input_away_team is None: 
-        print("\n--- Predict Future Matchup (Interactive) ---")
-        print("Available teams:")
-        for i, team_name in enumerate(all_teams):
-            print(f"{i + 1}. {team_name}")
-        print("0. Exit")
-
-        while input_home_team is None:
-            home_team_idx_str = input(f"Enter number for Home Team (1-{len(all_teams)}, or 0 to exit): ").strip()
-            if not home_team_idx_str.isdigit():
-                print("Invalid input. Please enter a number.")
-                continue
-            home_team_idx = int(home_team_idx_str)
-            if home_team_idx == 0:
-                print("Exiting prediction script.")
-                exit()
-            if not (1 <= home_team_idx <= len(all_teams)):
-                print("Invalid team number. Please try again.")
-                continue
-            input_home_team = all_teams[home_team_idx - 1]
-
-        while input_away_team is None:
-            away_team_idx_str = input(f"Enter number for Away Team (1-{len(all_teams)}, not {input_home_team}, or 0 to exit): ").strip()
-            if not away_team_idx_str.isdigit():
-                print("Invalid input. Please enter a number.")
-                continue
-            away_team_idx = int(away_team_idx_str)
-            if away_team_idx == 0:
-                print("Exiting prediction script.")
-                exit()
-            if not (1 <= away_team_idx <= len(all_teams)):
-                print("Invalid team number. Please try again.")
-                continue
-            selected_away_team = all_teams[away_team_idx - 1]
-            if selected_away_team == input_home_team:
-                print("Away team cannot be the same as home team. Please try again.")
-                continue
-            input_away_team = selected_away_team
-    
-    print(f"\nSelected Matchup: {input_home_team} (Home) vs {input_away_team} (Away)")
-
-    # Find the match(es) in future_df
-    # Case-insensitive search is safer for team names if CSV has inconsistencies
+    # Find the match in future_df
     target_matches = future_df[
-        future_df['HomeTeam'].str.contains(input_home_team, case=False, na=False) &
-        future_df['AwayTeam'].str.contains(input_away_team, case=False, na=False)
+        future_df['HomeTeam'].str.contains(home_team, case=False, na=False) &
+        future_df['AwayTeam'].str.contains(away_team, case=False, na=False)
     ]
-
-    if target_matches.empty:
-        print(f"No match found for {input_home_team} vs {input_away_team} in {future_matches_path}")
-        # Try reversing if user might have mixed them up
-        target_matches_reversed = future_df[
-            future_df['HomeTeam'].str.contains(input_away_team, case=False, na=False) &
-            future_df['AwayTeam'].str.contains(input_home_team, case=False, na=False)
-        ]
-        if not target_matches_reversed.empty:
-            print(f"Found match(es) if teams are reversed: {input_away_team} (H) vs {input_home_team} (A). Please re-enter if this was intended.")
-        print("\nExiting prediction script.") # Moved this to be the final print
-        exit()
-
-    print(f"Found {len(target_matches)} match(es) for {input_home_team} vs {input_away_team}:")
     
-    for idx, future_match_details_row in target_matches.iterrows():
-        print(f"Processing Match (Original Index: {idx}):")
-        print(f"  Date: {future_match_details_row.get('Date', 'N/A')}, Home: {future_match_details_row.get('HomeTeam')}, Away: {future_match_details_row.get('AwayTeam')}")
-
-        # Prepare data for this specific match
-        # future_match_details_row is a Series
-        prepared_data_row = prepare_future_match_data(future_match_details_row, label_encoders, model_feature_names, historical_df)
-        
-        if prepared_data_row is None or prepared_data_row.empty:
-            print("  Could not prepare data for this match. Skipping.")
-            continue
-        
-        if prepared_data_row.isnull().any().any():
-            print("  Warning: Prepared data row contains NaNs even after fillna(0). This is unexpected.")
-            print(prepared_data_row.isnull().sum()[prepared_data_row.isnull().sum() > 0])
-            # Decide: skip, or try to predict anyway if XGBoost handles it (it might if only a few non-critical)
-
-        # Make prediction
-        predicted_outcome, probabilities = make_prediction(prepared_data_row, model)
-
-        print(f"  Predicted Outcome: {predicted_outcome}")
-        if probabilities is not None:
-            prob_dict = {"Away Win": probabilities[0], "Draw": probabilities[1], "Home Win": probabilities[2]}
-            print(f"  Probabilities: Away Win: {prob_dict['Away Win']:.3f}, Draw: {prob_dict['Draw']:.3f}, Home Win: {prob_dict['Home Win']:.3f}")
-            
-            # Tambahkan kode ini untuk menampilkan chart
-            display_result_chart(prob_dict["Home Win"], prob_dict["Draw"], prob_dict["Away Win"])
-
-        # Cross-check with actual result if available in the 2024-2025 CSV
-        actual_ftr = future_match_details_row.get('FTR', None) # Full Time Result (H, D, A)
-        actual_fthg = future_match_details_row.get('FTHG', None)
-        actual_ftag = future_match_details_row.get('FTAG', None)
-
-        if pd.notna(actual_ftr) and pd.notna(actual_fthg) and pd.notna(actual_ftag):
-            actual_outcome_map = {'H': "Home Win", 'D': "Draw", 'A': "Away Win"}
-            actual_result_str = actual_outcome_map.get(actual_ftr, "Unknown Actual Result Code")
-            print(f"  Actual Result (from CSV): {actual_result_str} ({actual_fthg}-{actual_ftag})")
-            if predicted_outcome == actual_result_str:
-                print("  Prediction was CORRECT!")
-            else:
-                print("  Prediction was INCORRECT.")
-        else:
-            print("  Actual result not yet available in the CSV or columns missing (FTR, FTHG, FTAG).")
-
-    print("\nExiting prediction script.") # Moved this to be the final print 
+    if target_matches.empty:
+        return {"error": f"No match found for {home_team} vs {away_team}"}
+    
+    # Use the first match found
+    future_match_details_row = target_matches.iloc[0]
+    
+    # Prepare data for prediction
+    prepared_data_row = prepare_future_match_data(future_match_details_row, label_encoders, model_feature_names, historical_df)
+    
+    if prepared_data_row is None or prepared_data_row.empty:
+        return {"error": "Could not prepare data for this match"}
+    
+    # Make prediction
+    predicted_outcome, probabilities = make_prediction(prepared_data_row, model)
+    
+    if isinstance(predicted_outcome, str) and predicted_outcome.startswith("Prediction Error"):
+        return {"error": predicted_outcome}
+    
+    result = {
+        "predicted_outcome": predicted_outcome,
+        "home_win_prob": float(probabilities[2]) if probabilities is not None else 0,
+        "draw_prob": float(probabilities[1]) if probabilities is not None else 0,
+        "away_win_prob": float(probabilities[0]) if probabilities is not None else 0,
+        "match_date": future_match_details_row.get('Date', 'N/A')
+    }
+    
+    # Add actual result if available
+    actual_ftr = future_match_details_row.get('FTR', None)
+    actual_fthg = future_match_details_row.get('FTHG', None)
+    actual_ftag = future_match_details_row.get('FTAG', None)
+    
+    if pd.notna(actual_ftr) and pd.notna(actual_fthg) and pd.notna(actual_ftag):
+        actual_outcome_map = {'H': "Home Win", 'D': "Draw", 'A': "Away Win"}
+        result["actual_outcome"] = actual_outcome_map.get(actual_ftr, "Unknown")
+        result["actual_score"] = f"{int(actual_fthg)}-{int(actual_ftag)}"
+    
+    return result 
