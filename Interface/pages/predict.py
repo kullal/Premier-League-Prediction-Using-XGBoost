@@ -138,6 +138,8 @@ with st.container(border=True):
         
         if show_odds:
             st.subheader("Odds Pertandingan")
+            st.text("Odds yang digunakan adalah odds yang menangkap sentimen pasar, Anda bisa menggunakan odds yang Anda inginkan dengan data yang ada di situs web yang menyediakan data odds tersebut!")
+            st.markdown("####")
             
             # Dapatkan default odds
             default_odds = get_default_odds()
