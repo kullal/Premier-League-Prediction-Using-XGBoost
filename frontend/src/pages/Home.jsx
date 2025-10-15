@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Background from "../components/HomeBackground";
 import heroImage from "../assets/Premier-League-Logo-White.png";
+import FeatureList from "../components/FeatureList";
 
 function Home() {
   return (
@@ -43,6 +44,7 @@ function Home() {
           </div>
         </div>
       </div>
+      <FeatureList />
     </div>
   );
 }
