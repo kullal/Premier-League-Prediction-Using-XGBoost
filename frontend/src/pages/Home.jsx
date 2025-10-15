@@ -34,7 +34,7 @@ function Home() {
             </p>
             <a
               href="/predict"
-              className="py-3 px-10 bg-white/2 backdrop-blur-md border border-white/10 shadow-2xl text-xl font-semibold text-white rounded-full hover:bg-white/10 transition-colors duration-300 drop-shadow-lg inline-block"
+              className="py-3 px-10 bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl text-xl font-semibold text-white rounded-full hover:bg-white/10 transition-colors duration-300 drop-shadow-lg inline-block"
             >
               Predict Now!
             </a>

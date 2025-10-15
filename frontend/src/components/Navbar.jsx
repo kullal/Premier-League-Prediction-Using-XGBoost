@@ -22,6 +22,9 @@ export default function Navbar() {
           <Link to={"/about"} className="text-white hover:text-red-500">
             About
           </Link>
+          <Link to={"https://github.com/kullal/Premier-League-Prediction-Using-XGBoost"} className="text-white hover:text-red-500">
+            Docs
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
