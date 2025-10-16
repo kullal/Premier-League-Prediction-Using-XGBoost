@@ -18,7 +18,7 @@ function Home() {
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
         <div className="max-w-7xl flex mx-auto">
-          <div className="w-1/2 space-y-8">
+          <div className="w-5/8 space-y-8">
             {/* Hero Section */}
             <h1 className="text-6xl font-bold mb-16 drop-shadow-lg">
               Ready to Predict Next EPL Season!! 🔥
@@ -39,7 +39,7 @@ function Home() {
               Predict Now!
             </a>
           </div>
-          <div className="w-1/2 flex justify-end items-center">
+          <div className="w-3/8 flex justify-end items-center">
             <img src={heroImage} alt="Hero" className="w-96 h-auto pr-4" />
           </div>
         </div>

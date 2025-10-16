@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import heroImage from "../assets/Premier-League-Logo-White.png";
 
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
@@ -7,8 +8,11 @@ export default function Navbar() {
   return (
     <nav className="fixed left-1/2 transform -translate-x-1/2 top-6 w-[calc(100%-2rem)] max-w-7xl z-50">
       <div className="flex items-center justify-between px-6 py-4 rounded-3xl bg-white/2 backdrop-blur-md border border-white/10 shadow-2xl transition-transform duration-300 ease-out hover:-translate-y-1">
-        <Link to={"/"} className="text-2xl font-bold text-white drop-shadow">
-          EPL Predictor
+        <Link to={"/"} className="flex items-center gap-3 font-bold text-white drop-shadow">
+          <div className="flex items-center">
+            <img src={heroImage} alt="Hero" className="w-12 h-auto pr-4" />
+          </div>
+          <h2 className="text-2xl">EPL Predictor</h2>
         </Link>
 
         {/* Desktop Navigation */}
@@ -22,10 +26,16 @@ export default function Navbar() {
           <Link to={"/about"} className="text-white hover:text-red-500">
             About
           </Link>
-          <Link to={"https://github.com/kullal/Premier-League-Prediction-Using-XGBoost"} className="text-white hover:text-red-500">
+        </div>
+
+        <Link
+            to={
+              "https://github.com/kullal/Premier-League-Prediction-Using-XGBoost"
+            }
+            className="text-white hover:text-black-200 hover:bg-white/15 px-6 py-2 rounded-3xl bg-white/2 backdrop-blur-md border border-white/10 shadow-2xl"
+          >
             Docs
           </Link>
-        </div>
 
         {/* Mobile Toggle */}
         <div className="md:hidden">
