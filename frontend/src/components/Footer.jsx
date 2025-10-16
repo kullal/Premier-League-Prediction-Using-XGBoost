@@ -49,22 +49,25 @@ export default function Footer() {
           </div>
           <div className="flex flex-col gap-2">
             <h4 className="text-lg font-bold">Resources</h4>
-            <Link
-              href="/https://github.com/kullal/Premier-League-Prediction-Using-XGBoost"
+
+            {/* External links should use <a> not react-router <Link> */}
+            <a
+              href="https://github.com/kullal/Premier-League-Prediction-Using-XGBoost"
               className="text-sm text-white/50 hover:text-white/90 transition-colors"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               Repositories
-            </Link>
-            <Link
-              href="/https://github.com/kullal/Premier-League-Prediction-Using-XGBoost"
+            </a>
+
+            <a
+              href="https://github.com/kullal/Premier-League-Prediction-Using-XGBoost/issues"
               className="text-sm text-white/50 hover:text-white/90 transition-colors"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               Report Issues
-            </Link>
+            </a>
           </div>
         </nav>
 
