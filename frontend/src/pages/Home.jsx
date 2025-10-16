@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Background from "../components/HomeBackground";
 import heroImage from "../assets/Premier-League-Logo-White.png";
 import FeatureList from "../components/FeatureList";
+import CTAHomepage from "../components/CTAHomepage";
 
 function Home() {
   return (
@@ -15,7 +16,6 @@ function Home() {
           speed={0.32}
         />
       </div>
-
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
         <div className="max-w-7xl flex mx-auto">
           <div className="w-5/8 space-y-8">
@@ -45,6 +45,7 @@ function Home() {
         </div>
       </div>
       <FeatureList />
+      <CTAHomepage />
     </div>
   );
 }
