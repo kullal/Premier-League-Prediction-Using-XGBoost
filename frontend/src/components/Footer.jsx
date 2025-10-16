@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="flex items-start gap-4">
           <div className="p-2 items-center justify-center rounded-xl bg-white/8 border border-white/8">
             <img
-              src="/src/assets/Premier-League-Logo-White.png"
+              src="/assets/Premier-League-Logo-White.png"
               alt=""
               className="w-8 h-auto"
             />

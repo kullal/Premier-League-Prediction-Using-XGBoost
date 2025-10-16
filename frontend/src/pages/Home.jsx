@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Background from "../components/HomeBackground";
-import heroImage from "../assets/Premier-League-Logo-White.png";
 import FeatureList from "../components/FeatureList";
 import CTAHomepage from "../components/CTAHomepage";
 
@@ -41,7 +40,7 @@ function Home() {
             </a>
           </div>
           <div className="w-3/8 flex justify-end items-center">
-            <img src={heroImage} alt="Hero" className="w-96 h-auto pr-4" />
+            <img src="/assets/Premier-League-Logo-White.png" alt="Hero" className="w-96 h-auto pr-4" />
           </div>
         </div>
       </div>

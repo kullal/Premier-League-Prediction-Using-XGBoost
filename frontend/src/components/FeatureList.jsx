@@ -188,7 +188,7 @@ export default function FeatureList({ features }) {
 
             <div className="mt-6 flex items-end justify-between">
               <img
-                src="/src/assets/Premier-League-Logo-White.png"
+                src="/assets/Premier-League-Logo-White.png"
                 alt="Logo EPL"
                 className="w-24 h-auto opacity-70 hover:opacity-100 transition-opacity duration-300"
               />

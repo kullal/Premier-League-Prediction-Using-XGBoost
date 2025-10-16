@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import heroImage from "../assets/Premier-League-Logo-White.png";
 
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
@@ -10,7 +9,7 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-6 py-4 rounded-3xl bg-white/2 backdrop-blur-md border border-white/10 shadow-2xl transition-transform duration-300 ease-out hover:-translate-y-1">
         <Link to={"/"} className="flex items-center gap-3 font-bold text-white drop-shadow">
           <div className="flex items-center">
-            <img src={heroImage} alt="Hero" className="w-12 h-auto pr-4" />
+            <img src="/assets/Premier-League-Logo-White.png" alt="Hero" className="w-12 h-auto pr-4" />
           </div>
           <h2 className="text-2xl">EPL Predictor</h2>
         </Link>
