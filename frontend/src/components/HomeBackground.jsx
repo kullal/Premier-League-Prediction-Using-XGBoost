@@ -5,7 +5,7 @@ export default function HomeBackground() {
   return (
     <div className="relative w-screen h-screen">
       <img
-        src="src/assets/izuddin-helmi-adnan-K5ChxJaheKI-unsplash.jpg"
+        src="/public/assets/izuddin-helmi-adnan-K5ChxJaheKI-unsplash.jpg"
         alt=""
         className="absolute inset-0 w-full h-full object-cover opacity-70"
       />
