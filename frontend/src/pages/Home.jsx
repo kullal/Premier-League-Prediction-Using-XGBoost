@@ -23,14 +23,15 @@ function Home() {
             <h1 className="text-6xl font-bold mb-16 drop-shadow-lg">
               Ready to Predict Next EPL Season!! 🔥
             </h1>
-            <p className="text-xl text-justify text-gray-300 mb-16 drop-shadow-md">
-              <strong>Prediksi Match EPL Next Season 2025/2026</strong> dengan
-              akurasi tinggi dan analisis mendalam. Dapatkan prediksi
-              pertandingan yang akurat dan analisis mendalam untuk setiap
-              pertandingan. Prediksi pertandingan EPL Next Season 2025/2026
-              dengan akurasi tinggi dan analisis mendalam. Dapatkan prediksi
-              pertandingan yang akurat dan analisis mendalam untuk setiap
-              pertandingan.{" "}
+            <p className="text-xl text-justify text-indent-40 text-gray-300 mb-16 drop-shadow-md">
+              Dive into the world of football analytics with our cutting-edge
+              Premier League Match Predictor. Leveraging historical data and
+              advanced machine learning algorithms, our tool provides accurate
+              predictions for upcoming matches. Whether you're a die-hard fan,
+              a fantasy league enthusiast, or just curious about the beautiful
+              game, our predictor offers insights that can enhance your viewing
+              experience. Get ready to make informed predictions and elevate
+              your football knowledge to the next level!
             </p>
             <a
               href="/predict"
