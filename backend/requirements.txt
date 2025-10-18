@@ -7,3 +7,4 @@ seaborn>=0.11.2
 joblib
 Flask
 Flask-Cors
+gunicorn

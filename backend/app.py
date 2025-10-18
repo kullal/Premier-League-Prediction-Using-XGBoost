@@ -9,7 +9,12 @@ from modules.predict_future import predict_future_match, get_teams_and_referees
 from modules.predict_history import predict_history_matchup
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*")
+if allowed_origins == "*" or not allowed_origins:
+    CORS(app)
+else:
+    CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
 
 # Endpoint untuk mendapatkan daftar tim dan wasit
 @app.route('/api/teams', methods=['GET'])
@@ -38,7 +43,6 @@ def predict_future():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Endpoint untuk prediksi berdasarkan riwayat
 @app.route('/api/predict/history', methods=['GET'])
 def predict_history():
     home_team = request.args.get('home_team')
@@ -72,4 +76,5 @@ def referees_endpoint():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
