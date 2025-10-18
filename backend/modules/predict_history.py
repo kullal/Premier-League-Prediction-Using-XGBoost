@@ -14,9 +14,11 @@ from modules.advanced_features import (
     get_winning_streak_feature
 )
 
-MODEL_DIR = "models"
-DATA_DIR = "Combined Dataset"
-FUTURE_DATA_DIR = "Dataset EPL New"
+# Get the backend directory path (parent of modules/)
+BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_DIR = os.path.join(BACKEND_DIR, "models")
+DATA_DIR = os.path.join(BACKEND_DIR, "Combined Dataset")
+FUTURE_DATA_DIR = os.path.join(BACKEND_DIR, "Dataset EPL New")
 
 def display_result_chart(home_win, draw, away_win):
     # Konversi probabilitas ke persentase
