@@ -5,15 +5,12 @@ import FeatureList from "../components/FeatureList";
 import CTAHomepage from "../components/CTAHomepage";
 
 function Home() {
+  const base = import.meta.env.BASE_URL || "/";
+  
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden">
       <div className="absolute w-full h-full">
-        <Background
-          colorStops={["#0F0520", "#3A0CA3", "#6A4BC7", "#A57BFF", "#FF94B4"]}
-          blend={0.9}
-          amplitude={1.6}
-          speed={0.32}
-        />
+        <Background />
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
         <div className="max-w-7xl flex mx-auto">
@@ -40,7 +37,7 @@ function Home() {
             </a>
           </div>
           <div className="w-3/8 flex justify-end items-center">
-            <img src="/assets/Premier-League-Logo-White.png" alt="Hero" className="w-96 h-auto pr-4" />
+            <img src={`${base}assets/Premier-League-Logo-White.png`} alt="Hero" className="w-96 h-auto pr-4" />
           </div>
         </div>
       </div>
