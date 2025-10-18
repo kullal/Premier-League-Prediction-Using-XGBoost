@@ -146,7 +146,7 @@ export default function CTAPrediction() {
             and API implementation on GitHub. Perfect for developers, data scientists, and football analytics enthusiasts!
           </p>
           <a 
-            href="https://github.com/greepzid" 
+            href="https://github.com/kullal/Premier-League-Prediction-Using-XGBoost" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2"
