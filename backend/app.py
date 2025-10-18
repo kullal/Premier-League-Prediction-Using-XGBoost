@@ -4,7 +4,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime
 
+# Add backend directory to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Import prediction functions
+from modules.predict_future import get_teams_and_referees, predict_future_match
+from modules.predict_history import predict_history_matchup
 
 app = Flask(__name__)
 
@@ -73,6 +78,24 @@ def referees_endpoint():
     except Exception as e:
         print("Error in /api/referees:", str(e))
         return jsonify({"error": str(e)}), 500
+
+# Health check endpoint untuk Render
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
+# Root endpoint
+@app.route('/', methods=['GET'])
+def root():
+    return jsonify({
+        "message": "EPL Prediction API",
+        "endpoints": {
+            "teams": "/api/teams",
+            "predict_future": "/api/predict/future",
+            "predict_history": "/api/predict/history",
+            "referees": "/api/referees"
+        }
+    }), 200
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
