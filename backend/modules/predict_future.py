@@ -6,6 +6,11 @@ import os
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+from modules.advanced_features import (
+    get_all_advanced_features,
+    calculate_prediction_confidence,
+    get_dynamic_default_odds
+)
 
 MODEL_DIR = "models"
 DATA_DIR = "Combined Dataset"
@@ -211,9 +216,22 @@ def prepare_match_data(match_input, label_encoders, all_features_columns, histor
         for key, value in hist_features.items():
             cleaned_key = clean_feature_name(key)
             processed_data[cleaned_key] = value
+        
+        # Add advanced features (H2H, venue stats, streaks, etc.)
+        try:
+            advanced_features = get_all_advanced_features(
+                match_input['HomeTeam'],
+                match_input['AwayTeam'],
+                match_date,
+                historical_data_df
+            )
+            for key, value in advanced_features.items():
+                processed_data[key] = value  # Already cleaned in advanced_features module
+        except Exception as e:
+            print(f"Warning: Could not calculate advanced features: {e}")
     else:
         print("Warning: HomeTeam, AwayTeam, or Date missing, cannot calculate historical features.")
-        hist_feat_names = [col for col in all_features_columns if any(suff in col for suff in ['AvgGS','AvgGC','FormPts'])]
+        hist_feat_names = [col for col in all_features_columns if any(suff in col for suff in ['AvgGS','AvgGC','FormPts','H2H','Venue','Streak','GD_'])]
         for h_feat in hist_feat_names:
             processed_data[h_feat] = np.nan
             
@@ -319,10 +337,10 @@ def get_teams_and_referees():
         print(f"Error getting teams and referees: {str(e)}")
         return None, None
 
-# Get default odds from bookmakers
 def get_default_odds():
     """
     Returns default odds values for bookmakers.
+    This is now a fallback - prefer using get_dynamic_default_odds from advanced_features.
     
     Returns:
         dict: Dictionary with default odds values
@@ -359,9 +377,14 @@ def predict_future_match(home_team, away_team, match_date, referee="Michael Oliv
     if model is None or label_encoders is None or historical_df is None or model_features is None:
         return {"error": "Failed to load model, encoders, or historical data"}
     
-    # Default odds if not provided
+    # Use dynamic odds if not provided
     if odds is None:
-        odds = get_default_odds()
+        try:
+            odds = get_dynamic_default_odds(home_team, away_team, match_date, historical_df)
+            print(f"Using dynamic odds based on team form: H:{odds['B365H']}, D:{odds['B365D']}, A:{odds['B365A']}")
+        except Exception as e:
+            print(f"Failed to calculate dynamic odds: {e}. Using static defaults.")
+            odds = get_default_odds()
     elif not isinstance(odds, dict):
         return {"error": "Odds must be provided as a dictionary"}
     else:
@@ -392,6 +415,37 @@ def predict_future_match(home_team, away_team, match_date, referee="Michael Oliv
     if isinstance(predicted_outcome, str) and predicted_outcome.startswith("Error"):
         return {"error": predicted_outcome}
     
+    # Calculate confidence score
+    confidence_metrics = calculate_prediction_confidence([
+        probabilities[0],  # Away win
+        probabilities[1],  # Draw
+        probabilities[2]   # Home win
+    ])
+    
+    # Get advanced context for display
+    try:
+        from modules.advanced_features import (
+            get_h2h_features,
+            get_winning_streak_feature,
+            get_goal_difference_momentum
+        )
+        
+        h2h_stats = get_h2h_features(home_team, away_team, pd.to_datetime(match_date_str, dayfirst=True), historical_df)
+        home_streak = get_winning_streak_feature(home_team, pd.to_datetime(match_date_str, dayfirst=True), historical_df)
+        away_streak = get_winning_streak_feature(away_team, pd.to_datetime(match_date_str, dayfirst=True), historical_df)
+        
+        advanced_context = {
+            "h2h_total_matches": h2h_stats.get('H2H_Total_Matches', 0),
+            "h2h_home_wins": h2h_stats.get('H2H_Home_Wins', 0),
+            "h2h_draws": h2h_stats.get('H2H_Draws', 0),
+            "h2h_away_wins": h2h_stats.get('H2H_Away_Wins', 0),
+            "home_win_streak": home_streak.get('Win_Streak', 0),
+            "away_win_streak": away_streak.get('Win_Streak', 0)
+        }
+    except Exception as e:
+        print(f"Could not calculate advanced context: {e}")
+        advanced_context = {}
+    
     # Prepare result
     result = {
         "match_date": match_date_str,
@@ -402,7 +456,10 @@ def predict_future_match(home_team, away_team, match_date, referee="Michael Oliv
         "home_win_prob": float(probabilities[2]) if probabilities is not None else None,
         "draw_prob": float(probabilities[1]) if probabilities is not None else None,
         "away_win_prob": float(probabilities[0]) if probabilities is not None else None,
-        # ensure odds values are JSON serializable
+        "confidence_score": confidence_metrics["confidence_score"],
+        "confidence_level": confidence_metrics["confidence_level"],
+        "confidence_margin": confidence_metrics["margin"],
+        "advanced_stats": advanced_context,
         "odds": {k: float(v) for k, v in odds.items()} if isinstance(odds, dict) else odds
     }
     

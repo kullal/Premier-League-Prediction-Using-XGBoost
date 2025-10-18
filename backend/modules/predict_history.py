@@ -7,10 +7,16 @@ import numpy as np
 from datetime import datetime
 import sys
 import matplotlib.pyplot as plt
+from modules.advanced_features import (
+    get_all_advanced_features,
+    calculate_prediction_confidence,
+    get_h2h_features,
+    get_winning_streak_feature
+)
 
 MODEL_DIR = "models"
 DATA_DIR = "Combined Dataset"
-FUTURE_DATA_DIR = "Dataset EPL New" # Directory for 2024-2025 data
+FUTURE_DATA_DIR = "Dataset EPL New"
 
 def display_result_chart(home_win, draw, away_win):
     # Konversi probabilitas ke persentase
@@ -170,7 +176,7 @@ def prepare_future_match_data(future_match_row, label_encoders, model_feature_na
     match_date_str = future_match_row.get('Date')
 
     if home_team and away_team and match_date_str:
-        match_date = pd.to_datetime(match_date_str, dayfirst=True, errors='coerce') # Assuming dd/mm/yyyy
+        match_date = pd.to_datetime(match_date_str, dayfirst=True, errors='coerce')
         if pd.isna(match_date):
             print(f"Error: Could not parse match date '{match_date_str}' for historical features.")
             hist_features = None
@@ -178,15 +184,29 @@ def prepare_future_match_data(future_match_row, label_encoders, model_feature_na
             hist_features = get_historical_features(home_team, away_team, match_date, historical_data_df)
         
         if hist_features:
-            processed_data.update(hist_features) # hist_features keys are already cleaned
-        else: # Fill with NaN if hist_features couldn't be calculated
+            processed_data.update(hist_features)
+            
+        # Add advanced features (H2H, venue stats, streaks, etc.)
+        if not pd.isna(match_date):
+            try:
+                advanced_features = get_all_advanced_features(
+                    home_team,
+                    away_team,
+                    match_date,
+                    historical_data_df
+                )
+                for key, value in advanced_features.items():
+                    processed_data[key] = value
+            except Exception as e:
+                print(f"Warning: Could not calculate advanced features: {e}")
+        
+        if not hist_features:
             for h_feat_template in ['{}_AvgGS_L{}', '{}_AvgGC_L{}', '{}_Form_Points_L{}']:
                 for team_prefix in ['HomeTeam', 'AwayTeam']:
                     for N in [3,5,10]:
                         processed_data[clean_feature_name(h_feat_template.format(team_prefix, N))] = np.nan
     else:
         print("Warning: HomeTeam, AwayTeam, or Date missing in future_match_row. Cannot calculate historical features.")
-        # Fill all historical features with NaN
         for h_feat_template in ['{}_AvgGS_L{}', '{}_AvgGC_L{}', '{}_Form_Points_L{}']:
             for team_prefix in ['HomeTeam', 'AwayTeam']:
                 for N in [3,5,10]:
@@ -276,11 +296,44 @@ def predict_history_matchup(home_team, away_team):
     if isinstance(predicted_outcome, str) and predicted_outcome.startswith("Prediction Error"):
         return {"error": predicted_outcome}
     
+    # Calculate confidence score
+    confidence_metrics = calculate_prediction_confidence([
+        probabilities[0],  # Away win
+        probabilities[1],  # Draw
+        probabilities[2]   # Home win
+    ])
+    
+    # Get advanced context for display
+    try:
+        match_date_dt = future_match_details_row.get('Date_dt')
+        if pd.notna(match_date_dt):
+            h2h_stats = get_h2h_features(home_team, away_team, match_date_dt, historical_df)
+            home_streak = get_winning_streak_feature(home_team, match_date_dt, historical_df)
+            away_streak = get_winning_streak_feature(away_team, match_date_dt, historical_df)
+            
+            advanced_context = {
+                "h2h_total_matches": h2h_stats.get('H2H_Total_Matches', 0),
+                "h2h_home_wins": h2h_stats.get('H2H_Home_Wins', 0),
+                "h2h_draws": h2h_stats.get('H2H_Draws', 0),
+                "h2h_away_wins": h2h_stats.get('H2H_Away_Wins', 0),
+                "home_win_streak": home_streak.get('Win_Streak', 0),
+                "away_win_streak": away_streak.get('Win_Streak', 0)
+            }
+        else:
+            advanced_context = {}
+    except Exception as e:
+        print(f"Could not calculate advanced context: {e}")
+        advanced_context = {}
+    
     result = {
         "predicted_outcome": predicted_outcome,
         "home_win_prob": float(probabilities[2]) if probabilities is not None else 0,
         "draw_prob": float(probabilities[1]) if probabilities is not None else 0,
         "away_win_prob": float(probabilities[0]) if probabilities is not None else 0,
+        "confidence_score": confidence_metrics["confidence_score"],
+        "confidence_level": confidence_metrics["confidence_level"],
+        "confidence_margin": confidence_metrics["margin"],
+        "advanced_stats": advanced_context,
         "match_date": future_match_details_row.get('Date', 'N/A'),
         "home_team": future_match_details_row.get('HomeTeam', home_team),
         "away_team": future_match_details_row.get('AwayTeam', away_team)
@@ -294,6 +347,6 @@ def predict_history_matchup(home_team, away_team):
     if pd.notna(actual_ftr) and pd.notna(actual_fthg) and pd.notna(actual_ftag):
         actual_outcome_map = {'H': "Home Win", 'D': "Draw", 'A': "Away Win"}
         result["actual_outcome"] = actual_outcome_map.get(actual_ftr, "Unknown")
-        result["actual_score"] = f"{int(actual_fthg)}-{int(actual_ftag)}"
+        result["score"] = f"{int(actual_fthg)}-{int(actual_ftag)}"
     
     return result 

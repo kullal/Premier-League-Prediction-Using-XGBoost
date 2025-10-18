@@ -90,6 +90,25 @@ function Predict() {
       });
   }, []);
 
+  // Team name normalization - map frontend display names to backend training names
+  const normalizeTeamName = (teamName) => {
+    const nameMap = {
+      "Manchester City": "Man City",
+      "Manchester United": "Man United",
+      "Manchester Utd": "Man United",
+      "Man Utd": "Man United",
+      "Nottingham Forest": "Nott'm Forest",
+      "Nottm Forest": "Nott'm Forest",
+      "Brighton & Hove Albion": "Brighton",
+      "Brighton and Hove Albion": "Brighton",
+      "Sheffield United": "Sheffield United",
+      "Sheffield Utd": "Sheffield United",
+      "Wolverhampton Wanderers": "Wolves",
+      "Wolverhampton": "Wolves",
+    };
+    return nameMap[teamName] || teamName;
+  };
+
   const handlePredict = async () => {
     if (!homeTeam || !awayTeam) {
       alert("Please select both teams.");
@@ -100,11 +119,10 @@ function Predict() {
     setPrediction(null);
     try {
       if (method === "Predict Future") {
-        // Build payload expected by backend for future prediction
         const payload = {
-          home_team: homeTeam,
-          away_team: awayTeam,
-          match_date: matchDate, // YYYY-MM-DD
+          home_team: normalizeTeamName(homeTeam),
+          away_team: normalizeTeamName(awayTeam),
+          match_date: matchDate,
           referee: referee || undefined,
           odds: {
             B365H: Number(oddsHome),
@@ -121,11 +139,10 @@ function Predict() {
         const data = await response.json();
         setPrediction(data);
       } else {
-        // Existing history GET
         const response = await fetch(
           `${API_URL}/predict/history?home_team=${encodeURIComponent(
-            homeTeam
-          )}&away_team=${encodeURIComponent(awayTeam)}`
+            normalizeTeamName(homeTeam)
+          )}&away_team=${encodeURIComponent(normalizeTeamName(awayTeam))}`
         );
         const data = await response.json();
         setPrediction(data);
@@ -623,6 +640,122 @@ function Predict() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Confidence Score Section - Only show for Predict History */}
+                  {prediction.confidence_level && method === "Predict History" && (
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+                      <h3 className="text-xl font-bold mb-4 text-white">
+                        Prediction Confidence
+                      </h3>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-gray-300">Confidence Level:</span>
+                        <span
+                          className={`font-bold text-lg ${
+                            prediction.confidence_level === "High"
+                              ? "text-green-400"
+                              : prediction.confidence_level === "Medium"
+                              ? "text-yellow-400"
+                              : "text-orange-400"
+                          }`}
+                        >
+                          {prediction.confidence_level}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-700/50 rounded-full h-3 overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-500 ${
+                            prediction.confidence_level === "High"
+                              ? "bg-gradient-to-r from-green-500 to-green-600"
+                              : prediction.confidence_level === "Medium"
+                              ? "bg-gradient-to-r from-yellow-500 to-yellow-600"
+                              : "bg-gradient-to-r from-orange-500 to-orange-600"
+                          }`}
+                          style={{
+                            width: `${
+                              prediction.confidence_score
+                                ? (prediction.confidence_score * 100).toFixed(0)
+                                : 0
+                            }%`,
+                          }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-2">
+                        {prediction.confidence_score
+                          ? `Score: ${(prediction.confidence_score * 100).toFixed(1)}%`
+                          : ""}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Advanced Stats - H2H & Form */}
+                  {prediction.advanced_stats && (
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+                      <h3 className="text-xl font-bold mb-4 text-white">
+                        Head-to-Head & Recent Form
+                      </h3>
+                      
+                      {prediction.advanced_stats.h2h_total_matches > 0 && (
+                        <div className="mb-4 pb-4 border-b border-white/10">
+                          <p className="text-sm text-gray-400 mb-2">
+                            Last {prediction.advanced_stats.h2h_total_matches} H2H Matches
+                          </p>
+                          <div className="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                              <div className="text-blue-400 text-2xl font-bold">
+                                {prediction.advanced_stats.h2h_home_wins || 0}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                {homeTeam} Wins
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-yellow-400 text-2xl font-bold">
+                                {prediction.advanced_stats.h2h_draws || 0}
+                              </div>
+                              <div className="text-xs text-gray-400">Draws</div>
+                            </div>
+                            <div>
+                              <div className="text-cyan-400 text-2xl font-bold">
+                                {prediction.advanced_stats.h2h_away_wins || 0}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                {awayTeam} Wins
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-sm text-gray-400 mb-1">
+                            {homeTeam} Win Streak
+                          </p>
+                          <p className="text-2xl font-bold text-white">
+                            {prediction.advanced_stats.home_win_streak || 0}
+                            {prediction.advanced_stats.home_win_streak > 0 && (
+                              <span className="text-sm text-green-400 ml-2">
+                                🔥
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-400 mb-1">
+                            {awayTeam} Win Streak
+                          </p>
+                          <p className="text-2xl font-bold text-white">
+                            {prediction.advanced_stats.away_win_streak || 0}
+                            {prediction.advanced_stats.away_win_streak > 0 && (
+                              <span className="text-sm text-green-400 ml-2">
+                                🔥
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {prediction.actual_outcome && (
                     <div className="bg-white/5 backdrop-blur-sm border border-white/5 rounded-xl p-6">
