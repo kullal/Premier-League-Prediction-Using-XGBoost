@@ -1,12 +1,10 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
 import sys
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from datetime import datetime
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from modules.predict_future import predict_future_match, get_teams_and_referees
-from modules.predict_history import predict_history_matchup
 
 app = Flask(__name__)
 
@@ -14,6 +12,7 @@ allowed_origins = os.getenv("ALLOWED_ORIGINS", "*")
 if allowed_origins == "*" or not allowed_origins:
     CORS(app)
 else:
+    # allow only frontend origin for API routes
     CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
 
 # Endpoint untuk mendapatkan daftar tim dan wasit

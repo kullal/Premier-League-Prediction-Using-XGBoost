@@ -2,10 +2,11 @@ import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import { useEffect, useRef } from 'react';
 
 export default function HomeBackground() {
+  const base = import.meta.env.BASE_URL || "/";
   return (
     <div className="relative w-screen h-screen">
       <img
-        src="/public/assets/izuddin-helmi-adnan-K5ChxJaheKI-unsplash.jpg"
+        src={`${base}assets/izuddin-helmi-adnan-K5ChxJaheKI-unsplash.jpg`}
         alt=""
         className="absolute inset-0 w-full h-full object-cover opacity-70"
       />
