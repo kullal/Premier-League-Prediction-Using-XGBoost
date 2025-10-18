@@ -53,5 +53,23 @@ def predict_history():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/referees', methods=['GET'])
+def referees_endpoint():
+    """
+    Return only referees list used by frontend.
+    Uses modules.predict_future.get_teams_and_referees to load data.
+    """
+    try:
+        teams, referees = get_teams_and_referees()
+        if referees:
+            referees_list = [str(r) for r in referees]
+            print(f"Loaded {len(referees_list)} referees") 
+            return jsonify({"referees": referees_list})
+        print("No referees loaded")
+        return jsonify({"error": "Could not load referees"}), 500
+    except Exception as e:
+        print("Error in /api/referees:", str(e))
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

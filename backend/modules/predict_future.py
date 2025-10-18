@@ -399,10 +399,11 @@ def predict_future_match(home_team, away_team, match_date, referee="Michael Oliv
         "away_team": away_team,
         "referee": referee,
         "predicted_outcome": predicted_outcome,
-        "home_win_prob": probabilities[2],
-        "draw_prob": probabilities[1],
-        "away_win_prob": probabilities[0],
-        "odds": odds
+        "home_win_prob": float(probabilities[2]) if probabilities is not None else None,
+        "draw_prob": float(probabilities[1]) if probabilities is not None else None,
+        "away_win_prob": float(probabilities[0]) if probabilities is not None else None,
+        # ensure odds values are JSON serializable
+        "odds": {k: float(v) for k, v in odds.items()} if isinstance(odds, dict) else odds
     }
     
     return result

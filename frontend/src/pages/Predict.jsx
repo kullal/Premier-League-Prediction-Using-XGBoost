@@ -11,7 +11,17 @@ function Predict() {
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("Predict History");
-  const BASE = import.meta.env.BASE_URL || "/"; // public asset base
+  const BASE = import.meta.env.BASE_URL || "/";
+
+  const [matchDate, setMatchDate] = useState(() =>
+    new Date().toISOString().slice(0, 10)
+  );
+  const [referee, setReferee] = useState("");
+  const [oddsHome, setOddsHome] = useState(2.0);
+  const [oddsDraw, setOddsDraw] = useState(3.0);
+  const [oddsAway, setOddsAway] = useState(4.0);
+
+  const [referees, setReferees] = useState([]);
 
   const teamNameToLogoMap = {
     Tottenham: "Tottenham_Hotspur",
@@ -60,6 +70,24 @@ function Predict() {
         if (data.teams) setTeams(data.teams);
       })
       .catch((err) => console.error("Error fetching teams:", err));
+
+    fetch(`${API_URL}/referees`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (data.referees && Array.isArray(data.referees) && data.referees.length > 0) {
+          setReferees(data.referees);
+          setReferee(data.referees[0]);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching referees:", err);
+        const fallback = ["A Kitchen", "M Atkinson", "M Dean", "M Oliver", "P Tierney"];
+        setReferees(fallback);
+        setReferee(fallback[0]);
+      });
   }, []);
 
   const handlePredict = async () => {
@@ -67,16 +95,41 @@ function Predict() {
       alert("Please select both teams.");
       return;
     }
+
     setLoading(true);
     setPrediction(null);
     try {
-      const response = await fetch(
-        `${API_URL}/predict/history?home_team=${encodeURIComponent(
-          homeTeam
-        )}&away_team=${encodeURIComponent(awayTeam)}`
-      );
-      const data = await response.json();
-      setPrediction(data);
+      if (method === "Predict Future") {
+        // Build payload expected by backend for future prediction
+        const payload = {
+          home_team: homeTeam,
+          away_team: awayTeam,
+          match_date: matchDate, // YYYY-MM-DD
+          referee: referee || undefined,
+          odds: {
+            B365H: Number(oddsHome),
+            B365D: Number(oddsDraw),
+            B365A: Number(oddsAway),
+          },
+        };
+
+        const response = await fetch(`${API_URL}/predict/future`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        setPrediction(data);
+      } else {
+        // Existing history GET
+        const response = await fetch(
+          `${API_URL}/predict/history?home_team=${encodeURIComponent(
+            homeTeam
+          )}&away_team=${encodeURIComponent(awayTeam)}`
+        );
+        const data = await response.json();
+        setPrediction(data);
+      }
     } catch (error) {
       console.error("Prediction failed:", error);
       setPrediction({
@@ -282,6 +335,112 @@ function Predict() {
               </div>
             </div>
           </div>
+
+          {/* Predict Future Inputs (date, referee, odds) */}
+          {method === "Predict Future" && (
+            <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm text-gray-300">Match Date</label>
+                <input
+                  type="date"
+                  value={matchDate}
+                  onChange={(e) => setMatchDate(e.target.value)}
+                  className="w-full py-3 px-4 bg-white/5 border border-white/8 rounded-lg"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm text-gray-300">Referee</label>
+                <Menu as="div" className="relative w-full">
+                  {({ open }) => (
+                    <>
+                      <Menu.Button className="w-full py-3 px-4 bg-white/5 border border-white/8 rounded-lg text-left flex justify-between items-center hover:bg-white/10 transition-colors">
+                        <span className="truncate text-white">
+                          {referee || "Select Referee"}
+                        </span>
+                        <svg 
+                          className={`w-5 h-5 transition-transform ${open ? 'rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </Menu.Button>
+                      <Menu.Items 
+                        className="absolute left-0 right-0 mt-2 max-h-56 overflow-y-auto bg-black border border-white/8 rounded-lg shadow-2xl focus:outline-none"
+                        style={{ zIndex: 9999 }}
+                      >
+                        {referees.length === 0 ? (
+                          <div className="px-4 py-3 text-sm text-gray-400 text-center">
+                            No referees loaded
+                          </div>
+                        ) : (
+                          referees.map((r, idx) => (
+                            <Menu.Item key={`${r}-${idx}`}>
+                              {({ active }) => (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReferee(r);
+                                    console.log("Selected referee:", r);
+                                  }}
+                                  className={`w-full text-left px-4 py-2.5 text-sm transition-colors border-b border-white/5 last:border-0 ${
+                                    active ? "bg-white/20 text-white" : "text-gray-300"
+                                  } ${referee === r ? "font-semibold text-white bg-white/10" : ""}`}
+                                >
+                                  {r}
+                                </button>
+                              )}
+                            </Menu.Item>
+                          ))
+                        )}
+                      </Menu.Items>
+                    </>
+                  )}
+                </Menu>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-gray-300">Home Odds</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="1"
+                    value={oddsHome}
+                    onChange={(e) => setOddsHome(e.target.value)}
+                    className="w-full py-3 px-4 bg-white/5 border border-white/8 rounded-lg"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-gray-300">Draw Odds</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="1"
+                    value={oddsDraw}
+                    onChange={(e) => setOddsDraw(e.target.value)}
+                    className="w-full py-3 px-4 bg-white/5 border border-white/8 rounded-lg"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-gray-300">Away Odds</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="1"
+                    value={oddsAway}
+                    onChange={(e) => setOddsAway(e.target.value)}
+                    className="w-full py-3 px-4 bg-white/5 border border-white/8 rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-center mt-8">
             <button
               onClick={handlePredict}
@@ -507,7 +666,7 @@ function Predict() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="w-2/5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center text-center">
                   <h3 className="text-2xl font-bold mb-6 text-white">
                     Predicted Winner
