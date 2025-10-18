@@ -1,17 +1,20 @@
 # 🏆 Premier League Match Prediction using XGBoost
-
-![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)
-![XGBoost](https://img.shields.io/badge/XGBoost-1.5+-green.svg)
-![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.0+-orange.svg)
-![Pandas](https://img.shields.io/badge/Pandas-1.3+-yellow.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+<p align="center">
+   <img src="https://img.shields.io/badge/Python-3.7+-blue.svg" alt="Python" />
+   <img src="https://img.shields.io/badge/XGBoost-1.5+-green.svg" alt="XGBoost" />
+   <img src="https://img.shields.io/badge/Scikit--learn-1.0+-orange.svg" alt="Scikit-learn" />
+   <img src="https://img.shields.io/badge/Pandas-1.3+-yellow.svg" alt="Pandas" />
+   <img src="https://img.shields.io/badge/Flask-2.0+-red.svg" alt="Flask" />
+   <img src="https://img.shields.io/badge/React-18+-blue.svg" alt="React" />
+   <img src="https://img.shields.io/badge/TailwindCSS-3.0+-cyan.svg" alt="TailwindCSS" />
+   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License" />
+</p>
 
 ## 📋 Overview
 
 This project leverages machine learning to predict the outcomes of English Premier League (EPL) matches. Using historical match data and advanced feature engineering, our XGBoost model can predict whether a match will result in a Home Win, Draw, or Away Win with accuracy exceeding typical benchmarks for football prediction.
 
-The system analyzes various factors including:
+The system features a modern web application built with React (frontend) and Flask (backend), providing an intuitive interface for match predictions. It analyzes various factors including:
 - Historical team performance metrics
 - Recent form indicators
 - Head-to-head statistics
@@ -46,7 +49,7 @@ Whether you're a football enthusiast, data scientist, or sports analyst, this pr
   - Performance metrics visualization
   - Prediction confidence analysis
 - **User-Friendly Interface**:
-  - Modern web application built with Streamlit
+  - Modern web application built with React and Tailwind CSS
   - Intuitive navigation and team selection
   - Clear visualization of prediction results
   - Responsive design for desktop and mobile devices
@@ -80,26 +83,26 @@ Whether you're a football enthusiast, data scientist, or sports analyst, this pr
     confusion_matrix_test.png
     feature_importances.png
 
-/Interface/
-    app.py                  # Main Streamlit application entry point
-    /pages/
-        home.py             # Home page with features overview
-        predict.py          # Prediction interface
-        about.py            # About page with project information
-    /assets/
-        Hero.png            # Hero image for home page
-        MatchPredict.png    # Default feature image
-        /feature_images/    # Feature-specific images
-        /team_logos/        # Team logos for the interface
+/backend/
+    app.py                  # Main Flask API application
+    requirements.txt        # Python dependencies
+    /modules/
+        predict_future.py   # Future match prediction logic
+        predict_history.py  # Historical matchup prediction logic
+
+/frontend/
+    package.json            # Node.js dependencies
+    vite.config.js          # Vite configuration
+    tailwind.config.js      # Tailwind CSS configuration
+    /src/
+        App.jsx             # Main React application
+        index.css           # Global styles with Tailwind
+        /components/        # Reusable React components
 
 /Tuning_Training/
     # Scripts and notebooks for model tuning and training
 
-PredictHistoryMatchup.py    # Script for historical matchup analysis
-PredictFuture.py            # Script for future match prediction
-
 README.md                   # Project documentation
-requirements.txt            # Project dependencies
 .gitignore                  # Git ignore file
 ```
 
@@ -108,8 +111,11 @@ requirements.txt            # Project dependencies
 ### Prerequisites
 
 - Python 3.7 or higher
+- Node.js 16 or higher (for frontend)
+- npm or yarn (Node.js package manager)
 - pip (Python package installer)
 - Git (optional, for version control)
+- Homebrew (recommended for macOS users to install OpenMP for XGBoost)
 
 ### Installation
 
@@ -119,48 +125,57 @@ git clone https://github.com/yourusername/Premier-League-Prediction-Using-XGBoos
 cd Premier-League-Prediction-Using-XGBoost
 ```
 
-2. Create a virtual environment (recommended):
+2. **Setup Backend (Flask)**:
 ```bash
+# Create virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install Python dependencies
+pip install -r backend/requirements.txt
+
+# For macOS users: Install OpenMP if XGBoost fails
+brew install libomp
+pip uninstall xgboost && pip install xgboost
 ```
 
-3. Install required packages:
+3. **Setup Frontend (React + Tailwind)**:
 ```bash
-pip install -r requirements.txt
+# Install Node.js dependencies
+cd frontend
+npm install
+cd ..
 ```
 
 ### Running the Web Application
 
-To launch the interactive web interface:
+The application consists of two parts: a Flask backend API and a React frontend. You need to run both simultaneously.
 
+1. **Start the Backend (Flask API)**:
 ```bash
-cd Interface
-streamlit run app.py
+cd backend
+source ../venv/bin/activate  # Activate virtual environment
+python app.py
 ```
+This will start the Flask server at `http://localhost:5000`.
 
-This will start the Streamlit server and open the application in your default web browser. If it doesn't open automatically, you can access it at `http://localhost:8501`.
+2. **Start the Frontend (React App)**:
+```bash
+cd frontend
+npm run dev
+```
+This will start the React development server at `http://localhost:5173`.
+
+Open `http://localhost:5173` in your browser to access the application.
 
 ### Using the Application
 
-The application consists of three main sections:
+The application provides an intuitive interface for EPL match predictions:
 
-1. **Home Page**:
-   - Overview of the application features
-   - Quick access to prediction functionality
-   - Visual representation of key capabilities
-
-2. **Predict Page**:
-   - Select home and away teams from dropdown menus
-   - View historical head-to-head statistics (if available)
-   - Get match outcome predictions with probability scores
-   - Analyze key factors influencing the prediction
-
-3. **About Page**:
-   - Detailed information about the project
-   - Methodology explanation
-   - Team member information
-   - Contact details
+- **Team Selection**: Choose home and away teams from dropdown menus
+- **Prediction Results**: View match outcome predictions with probability scores
+- **Historical Analysis**: Analyze head-to-head statistics between teams
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
 ## 💻 Using the Command-Line Tools
 
@@ -238,25 +253,40 @@ Our prediction system follows a comprehensive approach:
 
 Common issues and solutions:
 
-1. **Application Won't Start**:
-   - Verify all dependencies are installed: `pip install -r requirements.txt`
-   - Check Python version compatibility (3.7+ required)
-   - Ensure Streamlit is properly installed: `pip install streamlit`
+1. **XGBoost Installation Issues (especially on macOS)**:
+   - Install OpenMP: `brew install libomp`
+   - Reinstall XGBoost: `pip uninstall xgboost && pip install xgboost`
+   - If using conda: `conda install -c conda-forge xgboost`
 
-2. **Prediction Errors**:
+2. **Backend Won't Start**:
+   - Ensure virtual environment is activated: `source venv/bin/activate`
+   - Check all dependencies: `pip install -r backend/requirements.txt`
+   - Verify Python version (3.7+ required)
+   - Ensure model files exist in `/models/` directory
+
+3. **Frontend Won't Start**:
+   - Install dependencies: `cd frontend && npm install`
+   - Check Node.js version (16+ required)
+   - Clear npm cache: `npm cache clean --force`
+
+4. **CORS Errors**:
+   - Ensure backend is running on `http://localhost:5000`
+   - Frontend should access `http://localhost:5173`
+   - Check Flask-CORS configuration in `backend/app.py`
+
+5. **Prediction Errors**:
    - Verify model files exist in `/models/`
    - Check that team names match those in the training data
    - Ensure the application has access to all required data files
 
-3. **Display Issues**:
-   - Try a different web browser
-   - Clear browser cache and cookies
-   - Adjust browser zoom level if elements appear misaligned
-
-4. **Data Loading Problems**:
+6. **Data Loading Problems**:
    - Check file paths and permissions
    - Verify CSV files are properly formatted
    - Ensure dataset files are not corrupted
+
+7. **Port Conflicts**:
+   - Backend uses port 5000, frontend uses 5173
+   - Change ports in `backend/app.py` or `frontend/vite.config.js` if needed
 
 ## 📈 Future Improvements
 
@@ -303,7 +333,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Premier League for the data
 - XGBoost team for the amazing library
-- Streamlit for the powerful web application framework
+- Flask and React communities for powerful web development frameworks
+- Tailwind CSS for beautiful styling utilities
 - All contributors and users of this project
 
 ## 📧 Contact
