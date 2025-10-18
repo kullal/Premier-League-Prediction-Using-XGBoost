@@ -98,13 +98,15 @@ function Predict() {
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
         <div className="max-w-4xl mx-auto item-center">
           <h1 className="text-6xl text-center font-bold mb-12 drop-shadow-lg">
-            EPL Match Predictor 2025/2026 !
+            EPL Match Predictor 2025/2026
           </h1>
           <p className="text-xl text-center justify-center text-gray-300 mb-16 drop-shadow-md">
-            <strong>Welcome to the EPL Match Predictor!</strong> Predict the
-            outcome of upcoming Premier League matches using historical data and
-            advanced machine learning algorithms. Select your teams below and
-            click "Predict Now!" to see the results.
+            <strong>
+              Predict Premier League Match Outcomes with AI-Powered Precision!
+            </strong>
+            Harness the power of advanced machine learning algorithms trained on
+            comprehensive historical data to forecast match results. Simply
+            select your teams and unlock data-driven predictions in seconds.
           </p>
 
           <div className="flex justify-center">
@@ -128,13 +130,14 @@ function Predict() {
         id="prediction-top"
         className="relative my-8 mx-auto w-full flex lg:flex-col sm:flex-row items-center justify-center gap-4"
       >
-        <h2 className="text-6xl font-bold text-center">Prediction </h2>
+        <h2 className="text-6xl font-bold text-center">Match Prediction</h2>
         <p className="text-xl mb-16 text-center">
-          Select your best team to predict the match outcome
+          Choose your teams and discover the most likely match outcome based on
+          historical performance
         </p>
 
         <div className="w-full flex gap-2 mx-auto justify-center items-center">
-          <h4 className="text-xl font-bold">Select your prediction method:</h4>
+          <h4 className="text-xl font-bold">Prediction Method:</h4>
           <Menu as="div" className="relative inline-block text-left">
             <Menu.Button className="py-3 px-8 bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl text-xl text-white rounded-full hover:bg-white/10 transition-colors duration-300 drop-shadow-lg flex items-center gap-2">
               {method}
@@ -164,10 +167,10 @@ function Predict() {
           <div className="flex flex-col items-center justify-center text-center w-full">
             <div className="max-w-3xl">
               <h2 className="text-3xl md:text-4xl font-bold mb-1">
-                Choose Your Team
+                Select Your Teams
               </h2>
               <p className="text-sm text-gray-300 mb-4">
-                Please select your teams from the dropdown menus.
+                Pick the home and away teams to generate your match prediction
               </p>
             </div>
           </div>
@@ -291,167 +294,225 @@ function Predict() {
 
         {prediction && !prediction.error && (
           <section className="w-full max-w-7xl mx-auto mt-12">
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl rounded-2xl p-8">
-              <h2 className="text-4xl font-bold text-center mb-8 text-white">
-                Analisis Riwayat Pertandingan
+            <div className="bg-white/0 backdrop-blur-md border border-white/5 shadow-2xl rounded-2xl p-8">
+              <h2 className="text-4xl font-bold text-center mb-4 text-white">
+                Prediction Results
               </h2>
+              <p className="text-lg font-medium text-center mb-8">
+                AI-powered analysis of your selected matchup
+              </p>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-                  <h3 className="text-2xl font-bold mb-4 text-white">
-                    Statistik Prediksi
-                  </h3>
-                  <div className="h-px bg-red-500 w-12 mb-6"></div>
-                  
-                  <div className="grid grid-cols-3 gap-4 text-center mb-8">
-                    <div>
-                      <div className="text-gray-400 text-sm mb-2">Home</div>
-                      <div className="text-3xl font-bold text-white">
-                        {prediction.home_win_prob !== undefined
-                          ? `${(prediction.home_win_prob * 100).toFixed(0)}%`
-                          : "N/A"}
+              <div className="flex gap-4 items-stretch">
+                <div className="w-3/5 flex flex-col gap-6">
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 flex flex-col text-center flex-1">
+                    <h3 className="text-2xl text-center font-bold mb-4 text-white">
+                      Prediction Statistics
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4 text-center mb-8">
+                      <div>
+                        <div className="text-gray-400 text-sm mb-2">Home</div>
+                        <div className="text-3xl font-bold text-white">
+                          {prediction.home_win_prob !== undefined
+                            ? `${(prediction.home_win_prob * 100).toFixed(0)}%`
+                            : "N/A"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-gray-400 text-sm mb-2">Draw</div>
+                        <div className="text-3xl font-bold text-white">
+                          {prediction.draw_prob !== undefined
+                            ? `${(prediction.draw_prob * 100).toFixed(0)}%`
+                            : "N/A"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-gray-400 text-sm mb-2">Away</div>
+                        <div className="text-3xl font-bold text-white">
+                          {prediction.away_win_prob !== undefined
+                            ? `${(prediction.away_win_prob * 100).toFixed(0)}%`
+                            : "N/A"}
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-gray-400 text-sm mb-2">Draw</div>
-                      <div className="text-3xl font-bold text-white">
-                        {prediction.draw_prob !== undefined
-                          ? `${(prediction.draw_prob * 100).toFixed(0)}%`
-                          : "N/A"}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-gray-400 text-sm mb-2">Away</div>
-                      <div className="text-3xl font-bold text-white">
-                        {prediction.away_win_prob !== undefined
-                          ? `${(prediction.away_win_prob * 100).toFixed(0)}%`
-                          : "N/A"}
+
+                    <div className="space-y-4 w-full">
+                      <div className="bg-black/20 backdrop-blur-sm border border-white/5 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-12 h-12 flex-shrink-0">
+                            <img
+                              src={getTeamLogo(homeTeam)}
+                              alt={homeTeam}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
+                              }}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+
+                          <div className="flex-1 flex h-8 rounded-full overflow-hidden bg-gray-800/50 backdrop-blur-sm">
+                            <div
+                              className="bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold transition-all duration-500"
+                              style={{
+                                width: `${
+                                  prediction.home_win_prob
+                                    ? (prediction.home_win_prob * 100).toFixed(
+                                        0
+                                      )
+                                    : 0
+                                }%`,
+                              }}
+                            >
+                              {prediction.home_win_prob &&
+                              prediction.home_win_prob > 0.08
+                                ? `${(prediction.home_win_prob * 100).toFixed(
+                                    0
+                                  )}%`
+                                : ""}
+                            </div>
+
+                            <div
+                              className="bg-gradient-to-r from-yellow-500 to-yellow-600 flex items-center justify-center text-gray-900 text-xs font-bold transition-all duration-500"
+                              style={{
+                                width: `${
+                                  prediction.draw_prob
+                                    ? (prediction.draw_prob * 100).toFixed(0)
+                                    : 0
+                                }%`,
+                              }}
+                            >
+                              {prediction.draw_prob &&
+                              prediction.draw_prob > 0.08
+                                ? `${(prediction.draw_prob * 100).toFixed(0)}%`
+                                : ""}
+                            </div>
+
+                            <div
+                              className="bg-gradient-to-r from-cyan-500 to-cyan-600 flex items-center justify-center text-white text-xs font-bold transition-all duration-500"
+                              style={{
+                                width: `${
+                                  prediction.away_win_prob
+                                    ? (prediction.away_win_prob * 100).toFixed(
+                                        0
+                                      )
+                                    : 0
+                                }%`,
+                              }}
+                            >
+                              {prediction.away_win_prob &&
+                              prediction.away_win_prob > 0.08
+                                ? `${(prediction.away_win_prob * 100).toFixed(
+                                    0
+                                  )}%`
+                                : ""}
+                            </div>
+                          </div>
+
+                          <div className="w-12 h-12 flex-shrink-0">
+                            <img
+                              src={getTeamLogo(awayTeam)}
+                              alt={awayTeam}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
+                              }}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                            <span className="text-blue-400 font-semibold">
+                              {prediction.home_win_prob !== undefined
+                                ? `${(prediction.home_win_prob * 100).toFixed(
+                                    0
+                                  )}%`
+                                : "0%"}
+                            </span>
+                            <span className="text-gray-400 text-xs">
+                              {homeTeam || "Home"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <span className="text-yellow-400 font-semibold">
+                              {prediction.draw_prob !== undefined
+                                ? `${(prediction.draw_prob * 100).toFixed(0)}%`
+                                : "0%"}
+                            </span>
+                            <span className="text-gray-400 text-xs">draws</span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
+                            <span className="text-cyan-400 font-semibold">
+                              {prediction.away_win_prob !== undefined
+                                ? `${(prediction.away_win_prob * 100).toFixed(
+                                    0
+                                  )}%`
+                                : "0%"}
+                            </span>
+                            <span className="text-gray-400 text-xs">
+                              {awayTeam || "Away"}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="bg-black/20 backdrop-blur-sm border border-white/5 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="w-12 h-12 flex-shrink-0">
-                          <img
-                            src={getTeamLogo(homeTeam)}
-                            alt={homeTeam}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
-                            }}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
+                  {prediction.actual_outcome && (
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/5 rounded-xl p-6">
+                      <h3 className="text-center text-2xl font-bold mb-4 text-white">
+                        Historical Match Validation
+                      </h3>
 
-                        <div className="flex-1 flex h-8 rounded-full overflow-hidden bg-gray-800/50 backdrop-blur-sm">
-                          <div
-                            className="bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold transition-all duration-500"
-                            style={{
-                              width: `${
-                                prediction.home_win_prob
-                                  ? (prediction.home_win_prob * 100).toFixed(0)
-                                  : 0
-                              }%`,
-                            }}
-                          >
-                            {prediction.home_win_prob &&
-                            prediction.home_win_prob > 0.08
-                              ? `${(prediction.home_win_prob * 100).toFixed(0)}%`
-                              : ""}
-                          </div>
-
-                          <div
-                            className="bg-gradient-to-r from-yellow-500 to-yellow-600 flex items-center justify-center text-gray-900 text-xs font-bold transition-all duration-500"
-                            style={{
-                              width: `${
-                                prediction.draw_prob
-                                  ? (prediction.draw_prob * 100).toFixed(0)
-                                  : 0
-                              }%`,
-                            }}
-                          >
-                            {prediction.draw_prob && prediction.draw_prob > 0.08
-                              ? `${(prediction.draw_prob * 100).toFixed(0)}%`
-                              : ""}
-                          </div>
-
-                          <div
-                            className="bg-gradient-to-r from-cyan-500 to-cyan-600 flex items-center justify-center text-white text-xs font-bold transition-all duration-500"
-                            style={{
-                              width: `${
-                                prediction.away_win_prob
-                                  ? (prediction.away_win_prob * 100).toFixed(0)
-                                  : 0
-                              }%`,
-                            }}
-                          >
-                            {prediction.away_win_prob &&
-                            prediction.away_win_prob > 0.08
-                              ? `${(prediction.away_win_prob * 100).toFixed(0)}%`
-                              : ""}
-                          </div>
-                        </div>
-
-                        <div className="w-12 h-12 flex-shrink-0">
-                          <img
-                            src={getTeamLogo(awayTeam)}
-                            alt={awayTeam}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
-                            }}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                          <span className="text-blue-400 font-semibold">
-                            {prediction.home_win_prob !== undefined
-                              ? `${(prediction.home_win_prob * 100).toFixed(0)}%`
-                              : "0%"}
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                          <span className="text-gray-400 min-w-[180px]">
+                            Match Date:
                           </span>
-                          <span className="text-gray-400 text-xs">
-                            {homeTeam || "Home"}
+                          <span className="text-green-400 font-mono">
+                            {prediction.match_date || "N/A"}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                          <span className="text-yellow-400 font-semibold">
-                            {prediction.draw_prob !== undefined
-                              ? `${(prediction.draw_prob * 100).toFixed(0)}%`
-                              : "0%"}
+                        <div className="flex items-start gap-3">
+                          <span className="text-gray-400 min-w-[180px]">
+                            Predicted Outcome:
                           </span>
-                          <span className="text-gray-400 text-xs">draws</span>
+                          <span className="text-green-400 font-semibold">
+                            {prediction.predicted_outcome || "N/A"}
+                          </span>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
-                          <span className="text-cyan-400 font-semibold">
-                            {prediction.away_win_prob !== undefined
-                              ? `${(prediction.away_win_prob * 100).toFixed(0)}%`
-                              : "0%"}
+                        <div className="flex items-start gap-3">
+                          <span className="text-gray-400 min-w-[180px]">
+                            Actual Result:
                           </span>
-                          <span className="text-gray-400 text-xs">
-                            {awayTeam || "Away"}
+                          <span className="text-green-400 font-semibold">
+                            {prediction.actual_outcome}
+                            {prediction.score && (
+                              <span className="ml-2 text-gray-400">
+                                ({prediction.score})
+                              </span>
+                            )}
                           </span>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center">
+                
+                <div className="w-2/5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center text-center">
                   <h3 className="text-2xl font-bold mb-6 text-white">
-                    Tim Pemenang
+                    Predicted Winner
                   </h3>
-                  
-                  <div className="flex items-center justify-center mb-4">
+
+                  <div className="flex items-center justify-center mb-4 flex-1">
                     <img
                       src={getTeamLogo(
                         prediction.predicted_outcome === "Home Win"
@@ -465,10 +526,10 @@ function Predict() {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
                       }}
-                      className="w-48 h-48 object-contain"
+                      className="max-w-full max-h-96 object-contain"
                     />
                   </div>
-                  
+
                   <div className="text-xl font-semibold text-gray-300">
                     {prediction.predicted_outcome === "Home Win"
                       ? homeTeam
@@ -478,61 +539,6 @@ function Predict() {
                   </div>
                 </div>
               </div>
-
-              {prediction.actual_outcome && (
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-                  <h3 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
-                    Validation with real match
-                    <svg
-                      className="w-5 h-5 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                      />
-                    </svg>
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <span className="text-gray-400 min-w-[180px]">
-                        Tanggal Pertandingan:
-                      </span>
-                      <span className="text-green-400 font-mono">
-                        {prediction.match_date || "N/A"}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-start gap-3">
-                      <span className="text-gray-400 min-w-[180px]">
-                        Hasil yang Diprediksi:
-                      </span>
-                      <span className="text-green-400 font-semibold">
-                        {prediction.predicted_outcome || "N/A"}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-start gap-3">
-                      <span className="text-gray-400 min-w-[180px]">
-                        Hasil Sebenarnya:
-                      </span>
-                      <span className="text-green-400 font-semibold">
-                        {prediction.actual_outcome}
-                        {prediction.score && (
-                          <span className="ml-2 text-gray-400">
-                            ({prediction.score})
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </section>
         )}
