@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CTAPrediction from "../components/CTAPrediction";
 import { Menu } from "@headlessui/react";
 
 const API_URL = "http://localhost:5000/api";
@@ -550,6 +551,8 @@ function Predict() {
             </div>
           </section>
         )}
+
+        <CTAPrediction />
       </div>
     </div>
   );
