@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Predict from "./pages/Predict";
@@ -11,6 +12,7 @@ export default function App() {
   return (
     <Router>
       <div className="min-h-screen bg-black text-white">
+        <ScrollToTop />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />

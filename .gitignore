@@ -53,9 +53,6 @@ Thumbs.db
 instance/
 .webassets-cache
 
-# React build output
-frontend/build/
-
 # Environment variables
 .env
 .env.local
