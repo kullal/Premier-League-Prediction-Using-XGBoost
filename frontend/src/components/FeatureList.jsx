@@ -225,7 +225,7 @@ export default function FeatureList({ features }) {
               }`;
 
               return (
-                <a href="/predict" key={idx} className={articleClass} style={{ '--glow-x': '50%', '--glow-y': '50%', '--glow-intensity': 0 }}>
+                <Link to="/predict" key={idx} className={articleClass} style={{ '--glow-x': '50%', '--glow-y': '50%', '--glow-intensity': 0 }}>
                   <div className="flex items-start justify-between w-full" style={{ zIndex: 2 }}>
                     <div className="flex items-start gap-4">
                       <div>
@@ -245,7 +245,7 @@ export default function FeatureList({ features }) {
                     <div className="text-sm text-gray-400">{f.more}</div>
                     <div className="text-xs text-gray-400">→</div>
                   </div>
-                </a>
+                </Link>
               );
             })}
           </div>

@@ -55,7 +55,6 @@ instance/
 
 # React build output
 frontend/build/
-frontend/dist/
 
 # Environment variables
 .env

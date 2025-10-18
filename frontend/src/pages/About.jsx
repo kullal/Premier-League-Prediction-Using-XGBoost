@@ -122,7 +122,7 @@ export default function About() {
             </p>
             <div className="mt-8">
               <a
-                href="https://github.com/greepzid"
+                href="https://github.com/kullal/Premier-League-Prediction-Using-XGBoost"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 py-3 px-8 bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl text-lg font-semibold text-white rounded-full hover:bg-white/10 transition-colors duration-300 drop-shadow-lg"

@@ -29,12 +29,12 @@ function Home() {
               experience. Get ready to make informed predictions and elevate
               your football knowledge to the next level!
             </p>
-            <a
-              href="/predict"
+            <Link
+              to="/predict"
               className="py-3 px-10 bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl text-xl font-semibold text-white rounded-full hover:bg-white/10 transition-colors duration-300 drop-shadow-lg inline-block"
             >
               Predict Now!
-            </a>
+            </Link>
           </div>
           <div className="w-3/8 flex justify-end items-center">
             <img src={`${base}assets/Premier-League-Logo-White.png`} alt="Hero" className="w-96 h-auto pr-4" />
