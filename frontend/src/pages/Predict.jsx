@@ -158,7 +158,7 @@ function Predict() {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white overflow-visible">
+    <div className="relative min-h-screen bg-black text-white overflow-hidden">
       <div className="absolute w-full h-full">
         <img
           src={`${BASE}assets/nighttime-serenity-a-3d-rendering_13271352.jpg`}
@@ -167,11 +167,11 @@ function Predict() {
         />
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
-        <div className="max-w-4xl mx-auto item-center">
-          <h1 className="text-6xl text-center font-bold mb-12 drop-shadow-lg">
-            EPL Match Predictor 2025/2026
+        <div className="text-left max-w-7xl text-center md:text-left sm:text-left">
+          <h1 className="text-4xl lg:text-6xl md:text-5xl sm:text-4xl md:text-center font-bold mb-16 drop-shadow-lg">
+            Are You Ready To Use The EPL Match Predictor 2025/2026 🔥
           </h1>
-          <p className="text-xl text-center justify-center text-gray-300 mb-16 drop-shadow-md">
+          <p className="lg:text-xl md:text-lg sm:text-base text-justify md:text-center text-gray-300 mb-16 drop-shadow-md">
             <strong>
               Predict Premier League Match Outcomes with AI-Powered Precision!
             </strong>
@@ -180,7 +180,7 @@ function Predict() {
             select your teams and unlock data-driven predictions in seconds.
           </p>
 
-          <div className="flex justify-center">
+          <div className="flex justify-start md:justify-center">
             <button
               type="button"
               onClick={() =>
@@ -199,18 +199,18 @@ function Predict() {
       {/* Prediction */}
       <div
         id="prediction-top"
-        className="relative my-8 mx-auto w-full flex lg:flex-col sm:flex-row items-center justify-center gap-4"
+        className="relative my-8 mx-auto w-full flex flex-col items-center justify-center gap-4"
       >
-        <h2 className="text-6xl font-bold text-center">Match Prediction</h2>
-        <p className="text-xl mb-16 text-center">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center">Match Prediction</h2>
+        <p className="text-lg md:text-xl mb-16 text-center">
           Choose your teams and discover the most likely match outcome based on
           historical performance
         </p>
 
-        <div className="w-full flex gap-2 mx-auto justify-center items-center">
-          <h4 className="text-xl font-bold">Prediction Method:</h4>
+        <div className="w-full px-4 flex gap-2 mx-auto justify-center items-center">
+          <h4 className="text-lg md:text-xl  font-bold">Prediction Method:</h4>
           <Menu as="div" className="relative inline-block text-left">
-            <Menu.Button className="py-3 px-8 bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl text-xl text-white rounded-full hover:bg-white/10 transition-colors duration-300 drop-shadow-lg flex items-center gap-2">
+            <Menu.Button className="py-3 px-4 bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl text-xl text-white rounded-full hover:bg-white/10 transition-colors duration-300 drop-shadow-lg flex items-center gap-2">
               {method}
               <span className="text-sm opacity-70">▾</span>
             </Menu.Button>
@@ -248,7 +248,7 @@ function Predict() {
 
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
             {/* Home card */}
-            <div className="bg-black/30 border border-white/6 rounded-xl p-6 flex flex-col min-h-[24rem]">
+            <div className="bg-black/30 border border-white/6 rounded-xl p-4 md:p-6 flex flex-col md:min-h-[24rem]">
               <label className="block text-sm text-gray-300 mb-3">
                 Choose Home Team:
               </label>
@@ -262,7 +262,7 @@ function Predict() {
                   </span>
                   <span className="opacity-60">▾</span>
                 </Menu.Button>
-                <Menu.Items className="absolute left-0 mt-2 w-full max-h-56 overflow-y-auto bg-white/10 backdrop-blur-[1000px] border border-white/10 rounded-lg z-50">
+                <Menu.Items className="absolute left-0 mt-2 w-full max-h-56 overflow-y-auto bg-black md:bg-white/10 backdrop-blur-[1000px] border border-white/10 rounded-lg z-50">
                   {teams.map((team) => (
                     <Menu.Item key={team}>
                       {({ active }) => (
@@ -280,7 +280,7 @@ function Predict() {
                 </Menu.Items>
               </Menu>
 
-              <div className="flex-1 flex items-center justify-center bg-black/40 border border-white/6 rounded-lg p-4">
+              <div className="hidden md:flex flex-1 justify-center items-center bg-black/40 border border-white/6 rounded-lg p-4">
                 <img
                   src={getTeamLogo(homeTeam)}
                   alt={homeTeam || "Home"}
@@ -288,22 +288,22 @@ function Predict() {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
                   }}
-                  className="max-h-72 object-contain transition-all"
+                  className="max-h-48 md:max-h-72 object-contain"
                 />
               </div>
 
-              <div className="mt-4 text-center text-gray-300 text-sm">
+              <div className="hidden md:block mt-4 text-center text-gray-300 text-sm">
                 {homeTeam ? `${homeTeam} (Home)` : "Home"}
               </div>
             </div>
 
             {/* VS center */}
             <div className="flex flex-col items-center justify-center h-full">
-              <div className="text-5xl font-bold">VS</div>
+              <div className="text-3xl md:text-5xl font-bold">VS</div>
             </div>
 
             {/* Away card */}
-            <div className="bg-black/30 border border-white/6 rounded-xl p-6 flex flex-col min-h-[24rem]">
+            <div className="bg-black/30 border border-white/6 rounded-xl p-4 md:p-6 flex flex-col md:min-h-[24rem]">
               <label className="block text-sm text-gray-300 mb-3">
                 Choose Away Team:
               </label>
@@ -317,7 +317,7 @@ function Predict() {
                   </span>
                   <span className="opacity-60">▾</span>
                 </Menu.Button>
-                <Menu.Items className="absolute left-0 mt-2 w-full max-h-56 overflow-y-auto bg-white/10 backdrop-blur-[1000px] border border-white/10 rounded-lg z-50">
+                <Menu.Items className="absolute left-0 mt-2 w-full max-h-56 overflow-y-auto bg-black md:bg-white/10 backdrop-blur-[1000px] border border-white/10 rounded-lg z-50">
                   {teams.map((team) => (
                     <Menu.Item key={team}>
                       {({ active }) => (
@@ -335,7 +335,7 @@ function Predict() {
                 </Menu.Items>
               </Menu>
 
-              <div className="flex-1 flex items-center justify-center bg-black/40 border border-white/6 rounded-lg p-4">
+              <div className="hidden md:block flex-1 flex items-center justify-center bg-black/40 border border-white/6 rounded-lg p-4">
                 <img
                   src={getTeamLogo(awayTeam)}
                   alt={awayTeam || "Away"}
@@ -343,11 +343,11 @@ function Predict() {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
                   }}
-                  className="max-h-72 object-contain transition-all"
+                  className="max-h-48 md:max-h-72 object-contain"
                 />
               </div>
 
-              <div className="mt-4 text-center text-gray-300 text-sm">
+              <div className="hidden md:blockmt-4 text-center text-gray-300 text-sm">
                 {awayTeam ? `${awayTeam} (Away)` : "Away"}
               </div>
             </div>
@@ -355,7 +355,7 @@ function Predict() {
 
           {/* Predict Future Inputs (date, referee, odds) */}
           {method === "Predict Future" && (
-            <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div className="mt-12 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="flex flex-col gap-2">
                 <label className="text-sm text-gray-300">Match Date</label>
                 <input
@@ -479,8 +479,8 @@ function Predict() {
                 AI-powered analysis of your selected matchup
               </p>
 
-              <div className="flex gap-4 items-stretch">
-                <div className="w-3/5 flex flex-col gap-6">
+              <div className="flex gap-4 flex-col md:flex-row items-stretch">
+                <div className="w-full md:w-3/5 flex flex-col gap-6">
                   <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 flex flex-col text-center flex-1">
                     <h3 className="text-2xl text-center font-bold mb-4 text-white">
                       Prediction Statistics
@@ -800,7 +800,7 @@ function Predict() {
                   )}
                 </div>
 
-                <div className="w-2/5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center text-center">
+                <div className="w-full md:w-2/5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 md:p-6 flex flex-col items-center justify-center text-center">
                   <h3 className="text-2xl font-bold mb-6 text-white">
                     Predicted Winner
                   </h3>
@@ -819,7 +819,7 @@ function Predict() {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = `${BASE}assets/Premier-League-Logo-White.png`;
                       }}
-                      className="max-w-full max-h-96 object-contain"
+                      className="max-w-full max-h-64 md:max-h-96 object-contain"
                     />
                   </div>
 

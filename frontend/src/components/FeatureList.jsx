@@ -190,7 +190,7 @@ export default function FeatureList({ features }) {
               <img
                 src="/assets/Premier-League-Logo-White.png"
                 alt="Logo EPL"
-                className="w-24 h-auto opacity-70 hover:opacity-100 transition-opacity duration-300"
+                className="w-14 lg:w-24 h-auto opacity-70 hover:opacity-100 transition-opacity duration-300"
               />
               <Link
                 to="/predict"

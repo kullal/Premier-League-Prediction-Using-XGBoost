@@ -249,7 +249,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="card bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-8 mb-12" style={{ '--glow-x': '50%', '--glow-y': '50%', '--glow-intensity': 0, position: 'relative' }}>
+          <div className="card bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-8" style={{ '--glow-x': '50%', '--glow-y': '50%', '--glow-intensity': 0, position: 'relative' }}>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <h3 className="text-2xl font-bold mb-4">Contact</h3>
               <p className="text-gray-300 leading-relaxed">

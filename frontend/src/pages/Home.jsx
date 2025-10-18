@@ -12,14 +12,14 @@ function Home() {
       <div className="absolute w-full h-full">
         <Background />
       </div>
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
-        <div className="max-w-7xl flex mx-auto">
-          <div className="w-5/8 space-y-8">
+      <div className="relative z-10 flex flex-col items-start justify-center min-h-screen p-8">
+        <div className="max-w-7xl flex flex-col md:flex-row mx-auto items-center">
+          <div className="text-left w-full md:w-5/8 space-y-8 text-center md:text-left sm:text-left">
             {/* Hero Section */}
-            <h1 className="text-6xl font-bold mb-16 drop-shadow-lg">
+            <h1 className="text-4xl lg:text-6xl md:text-5xl sm:text-4xl font-bold mb-8 md:mb-16 drop-shadow-lg">
               Ready to Predict Next EPL Season!! 🔥
             </h1>
-            <p className="text-xl text-justify text-indent-40 text-gray-300 mb-16 drop-shadow-md">
+            <p className="lg:text-xl md:text-lg sm:text-base text-justify text-gray-300 mb-16 drop-shadow-md">
               Dive into the world of football analytics with our cutting-edge
               Premier League Match Predictor. Leveraging historical data and
               advanced machine learning algorithms, our tool provides accurate
@@ -36,8 +36,8 @@ function Home() {
               Predict Now!
             </Link>
           </div>
-          <div className="w-3/8 flex justify-end items-center">
-            <img src={`${base}assets/Premier-League-Logo-White.png`} alt="Hero" className="w-96 h-auto pr-4" />
+          <div className="hidden md:flex w-3/8 justify-end items-center mt-0">
+            <img src={`${base}assets/Premier-League-Logo-White.png`} alt="Hero" className="lg:w-96 h-auto md:w-54" />
           </div>
         </div>
       </div>
